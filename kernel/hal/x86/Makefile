@@ -5,8 +5,8 @@ CPP = g++
 CC = gcc
 LD = ld
 ASFLAGS = -m32
-CFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -fbuiltin
-CPPFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fbuiltin
+CFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -fbuiltin -march=native
+CPPFLAGS = -m32 -Wall -g -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fbuiltin -march=native
 LDFLAGS = -r -melf_i386
 
 hal.o: $(OBJS)
