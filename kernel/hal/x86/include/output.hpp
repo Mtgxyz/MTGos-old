@@ -1,6 +1,9 @@
 #ifndef _OUTPUT_HPP
 #define _OUTPUT_HPP
+#include <base.hpp>
+#include <stdint.h>
 namespace MTGosHAL {
+
 	enum class Base : int {
 		BINARY=2,
 		TERNARY,
@@ -20,12 +23,8 @@ namespace MTGosHAL {
 	};
 	/* abstract */ class Output {
 		private:
-			virtual void putChar(char c) { /*ignore*/ };
-			auto puts(const char* s) -> void {
-				int i=0;
-				while(s[i]!='\0')
-					putChar(s[i++]);
-			}
+			virtual auto putChar(char c) -> void = 0;
+			auto puts(const char* s) -> void;
 			int base=10;
 		public:
 			template <typename T>
@@ -36,32 +35,12 @@ namespace MTGosHAL {
 
 	};
 	template <>
-	auto Output::operator<<<Base>(Base output) -> Output & {
-		base=static_cast<int>(output);
-		return *this;
-	}
+	auto Output::operator<<<Base>(Base output) -> Output &;
 	template <>
-	auto Output::operator<<<int>(int output) -> Output & {
-		const char* chars="0123456789ABCDEF";
-		char buf[33];
-		buf[32]='\0';
-		char* ptr=buf+31;
-		do {
-			*(ptr--)=chars[output%base];
-			output/=base;
-		} while(output && (ptr!=buf));
-		puts(ptr+1);
-		return *this;
-	}
+	auto Output::operator<<<int>(int output) -> Output &;
 	template <>
-	auto Output::operator<<<char>(char output) -> Output & {
-		putChar(output);
-		return *this;
-	}
+	auto Output::operator<<<char>(char output) -> Output &;
 	template <>
-	auto Output::operator<<<char*>(char* output) -> Output & {
-		puts(output);
-		return *this;
-	}
+	auto Output::operator<<<char*>(char* output) -> Output &;
 }
 #endif
