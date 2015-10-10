@@ -1,9 +1,8 @@
 #include <output.hpp>
 #include <serial.hpp>
-namespace MTGosHAL {
-	Serial serialOUT(115200);
+namespace MTGosHAL { 
 	void main() {
-		serialOUT=Serial(115200);
+		Serial serialOUT(115200);
 		serialOUT << "This is the debug output of MTGos\n";
 	}
 }
