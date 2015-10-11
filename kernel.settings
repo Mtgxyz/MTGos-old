@@ -1,0 +1,10 @@
+MODE = debug
+#MODE = release # enables optimization
+
+ifeq ($(MODE),debug)
+  	CFLAGS += -g3 -DDEBUG
+	CPPFLAGS += -g3 -DDEBUG
+else
+	CFLAGS += -O9
+	CPPFLAGS += -O9
+endif
