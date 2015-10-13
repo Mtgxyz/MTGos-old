@@ -3,8 +3,10 @@
 #include <stdint.h>
 namespace MTGosHAL {
 	class Output;
+	class Input;
 	class Serial;
 	class Screen;
+	class Keyboard;
 	class GDT;
 	class IDT;
 	enum class BG_color: uint16_t;

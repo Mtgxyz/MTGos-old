@@ -37,13 +37,29 @@ namespace MTGosHAL {
 			while(1) {
 				asm volatile("cli; hlt");
 			}
-		} else if(cpu->intr >= 0x20 && cpu->intr <= 0x20) {
+		} else if(cpu->intr >= 0x20 && cpu->intr <= 0x2F) {
 			if(cpu->intr >= 0x28) {
 				outb(0xA0, 0x20);
 			}
 			outb(0x20, 0x20);
 			*debug << "The IRQ " << Base::DECIMAL << (int) cpu->intr-0x20 << " was handled.\n";
+			if(cpu->intr==0x20) {
+				debug->debug();
+			}
 		}
+		for(int i=0;i<16;i++) {
+			if(ivt[cpu->intr][i])
+				ivt[cpu->intr][i](cpu);
+		}
+	}
+	auto IDT::request(uint8_t intr, void (*handler)(struct cpu_state*)) -> bool {
+		for(int i=0;i<16;i++) {
+			if(ivt[intr][i])
+				continue;
+			ivt[intr][i]=handler;
+			return true;
+		}
+		return false;
 	}
 }
 extern "C" void handleINT(struct cpu_state* cpu) {

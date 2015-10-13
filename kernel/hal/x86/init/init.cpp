@@ -4,11 +4,13 @@
 #include <textDISP.hpp>
 #include <gdt.hpp>
 #include <idt.hpp>
+#include <keyboard.hpp>
 extern "C" void intr_stub_0(void);
 namespace MTGosHAL {
 	Serial* debug;
 	Screen* out;
 	Screen* err;
+	Keyboard* in;
 	IDT* idt;
 	void main() {
 		Serial serialOUT(115200);
@@ -36,6 +38,10 @@ namespace MTGosHAL {
 		idt->setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt->setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt->apply();
+
+//Init the Keyboard
+		Keyboard kb;
+		in = &kb;
 		sti();
 		for(;;);
 	}

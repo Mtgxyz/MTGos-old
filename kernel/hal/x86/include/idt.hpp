@@ -36,6 +36,7 @@ namespace MTGosHAL {
 	class IDT {
 		private:
 			uint64_t idt[256];
+			void (*ivt[256][16])(struct cpu_state *);
 			struct idtp {
 				uint16_t limit;
 				uint64_t* pointer;
@@ -46,6 +47,7 @@ namespace MTGosHAL {
 			auto setEntry(int i, void* offset, uint16_t seg, uint8_t flags) -> void;
 			auto apply() -> void;
 			auto handle(struct cpu_state* cpu) -> void;
+			auto request(uint8_t intr, void (*handler)(struct cpu_state*)) -> bool;
 	};
 }
 extern "C" void handleINT(struct cpu_state* cpu);
