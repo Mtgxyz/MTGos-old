@@ -33,10 +33,10 @@ namespace MTGosHAL {
 		//Check for self-test being passed
 		sendCommand(0x20);
 		uint8_t ccb=inb(0x60);
-		if(!(ccb&4)) {
-			debug << "Keyboard didn't pass self-test!\nDeactivating IRQ1.\n";
+		if((ccb&4)) {
 			ccb &= ~1;
 		} else {
+			debug << "Keyboard didn't pass self-test!\nDeactivating IRQ1.\n";
 			ccb |= 1;
 		}
 		sendCommand(0x60);
