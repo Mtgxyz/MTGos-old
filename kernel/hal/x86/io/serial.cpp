@@ -31,7 +31,8 @@ namespace MTGosHAL {
 			*this << '\n';
 		return chr;
 	}
-	Serial::Serial(uint32_t baud) {
+	Serial::Serial() {
+		uint32_t baud=115200;
 		port=*((uint16_t*)0x0400);
 		union {
 			uint8_t b[2];
@@ -54,9 +55,10 @@ namespace MTGosHAL {
 	auto Serial::debug() -> void {
 		if(getChar()) {
 			*this << "The interactive debug shell was started.\n> ";
-			*out << "The debug shell was started.\n";
+			out << "The debug shell was started.\n";
 			char buf[256];
-			*out << buf << "\nDebug shell closed.\n";
+			*this >> buf;
+			out << buf << "\nDebug shell closed.\n";
 			*this << "Unknown command. TODO\n";
 		}
 		uint64_t wt = waittimes;

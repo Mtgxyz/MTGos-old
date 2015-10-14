@@ -25,15 +25,15 @@ namespace MTGosHAL {
 		idt[i]|=((uint64_t)flags)<<40;
 	}
 	auto IDT::apply() -> void {
-		*debug << "Now trying to load the IDT.\n";
+		debug << "Now trying to load the IDT.\n";
 		idtptr.limit=(uint16_t)(256*8-1);
 		idtptr.pointer=(uint64_t*)&idt;
 		loadIDT((void*)&idtptr);
 	}
 	auto IDT::handle(struct cpu_state* cpu) -> void {
-		*debug << "Interrupt 0x" << Base::HEXADECIMAL << (int) cpu->intr << " was raised.\n";
+		debug << "Interrupt 0x" << Base::HEXADECIMAL << (int) cpu->intr << " was raised.\n";
 		if(cpu->intr<=0x1F) {
-			*out << "Exception 0x" << Base::HEXADECIMAL << (int) cpu->intr << "! Kernel halted!\n";
+			out << "Exception 0x" << Base::HEXADECIMAL << (int) cpu->intr << "! Kernel halted!\n";
 			while(1) {
 				asm volatile("cli; hlt");
 			}
@@ -42,9 +42,9 @@ namespace MTGosHAL {
 				outb(0xA0, 0x20);
 			}
 			outb(0x20, 0x20);
-			*debug << "The IRQ " << Base::DECIMAL << (int) cpu->intr-0x20 << " was handled.\n";
+			debug << "The IRQ " << Base::DECIMAL << (int) cpu->intr-0x20 << " was handled.\n";
 			if(cpu->intr==0x20) {
-				debug->debug();
+				debug.debug();
 			}
 		}
 		for(int i=0;i<16;i++) {
@@ -63,5 +63,5 @@ namespace MTGosHAL {
 	}
 }
 extern "C" void handleINT(struct cpu_state* cpu) {
-	MTGosHAL::idt->handle(cpu);
+	MTGosHAL::idt.handle(cpu);
 }

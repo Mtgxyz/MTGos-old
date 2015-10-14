@@ -18,11 +18,11 @@ namespace MTGosHAL {
 		outb(0x60, command);
 	}
 	auto Keyboard::handleIRQ1(struct cpu_state* cpu) -> void {
-		*debug << "Keyboard interrupt received.\nGot: 0x" << Base::HEXADECIMAL << (int) inb(0x60) << ".\n";
+		debug << "Keyboard interrupt received.\nGot: 0x" << Base::HEXADECIMAL << (int) inb(0x60) << ".\n";
 	}
 	Keyboard::Keyboard(): shift(false), numlock(true), caps(false), scrollock(false) {
-		if(!idt->request(0x21, (void(*)(struct cpu_state*))&MTGosHAL::Keyboard::handleIRQ1)) {
-			*debug << "Could not get an handler for IRQ1 (Keyboard)\n";
+		if(!idt.request(0x21, (void(*)(struct cpu_state*))&MTGosHAL::Keyboard::handleIRQ1)) {
+			debug << "Could not get an handler for IRQ1 (Keyboard)\n";
 			return;
 		}
 		//Clear keyboard buffer
@@ -34,7 +34,7 @@ namespace MTGosHAL {
 		sendCommand(0x20);
 		uint8_t ccb=inb(0x60);
 		if(!(ccb&4)) {
-			*debug << "Keyboard didn't pass self-test!\nDeactivating IRQ1.\n";
+			debug << "Keyboard didn't pass self-test!\nDeactivating IRQ1.\n";
 			ccb &= ~1;
 		} else {
 			ccb |= 1;

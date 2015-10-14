@@ -1,5 +1,6 @@
 #include <base.hpp>
 #include <textDISP.hpp>
+int x=0, y=0;
 namespace MTGosHAL {
 	auto Screen::putChar(char c) -> void {
 		switch(c) {
@@ -27,6 +28,7 @@ namespace MTGosHAL {
 	auto Screen::clrscr() -> void {
 		for(int p=0; p<SCREEN_HEIGHT*SCREEN_WIDTH+SCREEN_WIDTH; p++)
 			vmem[p]=((uint16_t)fg) | ((uint16_t)bg) | ((uint16_t)' ');
+		x=y=0;
 	}
 	auto Screen::scroll() -> void {
 		for(int p=0; p<SCREEN_HEIGHT*SCREEN_WIDTH; p++)

@@ -1,14 +1,14 @@
+include ../../../kernel.settings
 SRCS = $(shell find -name '*.cpp' -o -name '*.[cS]')
 OBJS = $(addsuffix .o,$(basename $(SRCS)))
 
-CPP = g++
-CC = gcc
+CPP = $(PREFIX)g++
+CC = $(PREFIX)gcc
 ASFLAGS = -m32
 CFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -march=native -std=c11 -fno-builtin -Werror -nostdlib
-CPPFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -march=native -fno-builtin -Werror -nostdlib
+CPPFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -march=native -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused
 LDFLAGS = -r -melf_i386
 
-include ../../../kernel.settings
 
 all: $(OBJS)
 

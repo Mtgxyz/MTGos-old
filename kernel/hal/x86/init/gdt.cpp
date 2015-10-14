@@ -14,7 +14,7 @@ namespace MTGosHAL {
 		gdt[i] |= ((base >> 24) & 0xffLL) << 56;
 	}
 	auto GDT::apply() -> void {
-		*debug << "We are now trying to set our GDT. If the CPU triplefaults, something went wrong in MTGosHAL::GDT::apply() or loadGDT().\n";
+		debug << "We are now trying to set our GDT. If the CPU triplefaults, something went wrong in MTGosHAL::GDT::apply() or loadGDT().\n";
 		fin={(uint16_t)7*8-1, (void*)gdt};
 		loadGDT((void*)(&fin));
 	};

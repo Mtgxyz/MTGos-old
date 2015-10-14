@@ -1,7 +1,8 @@
+include ../kernel.settings
 SRCS = $(shell find -name '*.cpp' -o -name '*.[cS]')
 OBJS = $(addsuffix .o,$(basename $(SRCS)))
-LD = g++
-LDFLAGS = -T kernel.ld -nostdlib -nodefaultlibs
+LD = $(PREFIX)g++
+LDFLAGS = -T kernel.ld -nostdlib -nodefaultlibs -m32 -nostdlib -fno-builtin
 all: hal
 	$(LD) $(LDFLAGS) -o mtgos $(OBJS)
 hal:

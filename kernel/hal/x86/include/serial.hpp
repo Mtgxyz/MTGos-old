@@ -22,7 +22,7 @@ namespace MTGosHAL {
 			auto serial_received() -> int;
 			auto getChar() -> char;
 		public:
-			Serial(uint32_t baud);
+			Serial();
 			auto debug() -> void;
 	};
 }

@@ -45,7 +45,6 @@ namespace MTGosHAL {
 		private:
 			FG_color fg;
 			BG_color bg;
-			int x,y;
 			uint16_t* vmem=(uint16_t*)0xB8000;
 			auto putChar(char c) -> void;
 		public:

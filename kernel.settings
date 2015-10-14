@@ -1,6 +1,9 @@
 MODE = debug
 #MODE = release # enables optimization
 
+#PREFIX =
+PREFIX = i686-elf-
+
 ifeq ($(MODE),debug)
   	CFLAGS += -g3 -DDEBUG
 	CPPFLAGS += -g3 -DDEBUG

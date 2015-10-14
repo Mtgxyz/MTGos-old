@@ -11,10 +11,10 @@ namespace MTGosHAL {
 	class IDT;
 	enum class BG_color: uint16_t;
 	enum class FG_color: uint16_t;
-	extern Serial* debug;
-	extern Screen* out;
-	extern Screen* err;
-	extern GDT* gdt;
-	extern IDT* idt;
+	extern Serial debug;
+	extern Screen out;
+	extern Screen err;
+	extern GDT gdt;
+	extern IDT idt;
 }
 #endif
