@@ -9,14 +9,19 @@ namespace MTGosHAL {
 				break;
 			case '\r':
 				x=0;
+				
 				break;
-			case 0x7F:
+			case '\b':
 				x--;
 				if(x<0) x=0;
+				putChar(' ');
+				x--;
+				if(x<0) x=0;
+				break;
 			case '\0':
 				break;
 			default:
-				vmem[y*SCREEN_WIDTH+(x++)]=((uint16_t)fg) | ((uint16_t)bg) | ((uint16_t)c);
+				vmem[y*SCREEN_WIDTH+(x++)]=((uint16_t)fg) | ((uint16_t)bg) | ((uint8_t)c);
 				if(x==SCREEN_WIDTH) {
 					x=0; y++;
 				}

@@ -31,7 +31,7 @@ namespace MTGosHAL {
 		loadIDT((void*)&idtptr);
 	}
 	auto IDT::handle(struct cpu_state* cpu) -> void {
-		debug << "Interrupt 0x" << Base::HEXADECIMAL << (int) cpu->intr << " was raised.\n";
+		//debug << "Interrupt 0x" << Base::HEXADECIMAL << (int) cpu->intr << " was raised.\n";
 		if(cpu->intr<=0x1F) {
 			out << "Exception 0x" << Base::HEXADECIMAL << (int) cpu->intr << "! Kernel halted!\n";
 			while(1) {
@@ -42,9 +42,9 @@ namespace MTGosHAL {
 				outb(0xA0, 0x20);
 			}
 			outb(0x20, 0x20);
-			debug << "The IRQ " << Base::DECIMAL << (int) cpu->intr-0x20 << " was handled.\n";
+			//debug << "The IRQ " << Base::DECIMAL << (int) cpu->intr-0x20 << " was handled.\n";
 			if(cpu->intr==0x20) {
-				debug.debug();
+				//debug.debug();
 			}
 		}
 		for(int i=0;i<16;i++) {

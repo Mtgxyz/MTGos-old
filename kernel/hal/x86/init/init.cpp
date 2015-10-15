@@ -16,7 +16,7 @@ namespace MTGosHAL {
 	void main() {
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;
-		debug << "Hello debugger! This is MTGos version 0.0\nThese logs are probably very long, so please redirect the output to a file.\n";
+		debug << "Hello debugger! This is MTGos v00r01\nThese logs are probably very long, so please redirect the output to a file.\n";
 		gdt.setEntry(0, 0, 0, 0);
 		gdt.setEntry(1, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_CODESEG | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT);
 		gdt.setEntry(2, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_DATASEG | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT);
