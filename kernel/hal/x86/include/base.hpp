@@ -14,6 +14,7 @@ namespace MTGosHAL {
 	extern Serial debug;
 	extern Screen out;
 	extern Screen err;
+	extern Keyboard in;
 	extern GDT gdt;
 	extern IDT idt;
 }
