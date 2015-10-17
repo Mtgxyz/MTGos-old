@@ -17,6 +17,7 @@ namespace MTGosHAL {
 			uint16_t port;
 			uint64_t waittimes;
 			uint64_t transmits;
+			bool works;
 			auto isTransmitEmpty() -> int;
 			auto putChar(char chr) -> void;
 			auto serial_received() -> int;

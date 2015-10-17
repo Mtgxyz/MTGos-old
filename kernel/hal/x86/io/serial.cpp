@@ -5,8 +5,17 @@ namespace MTGosHAL {
 		return inb(port+SERIAL_LSR)&0x20;
 	}
 	auto Serial::putChar(char chr) -> void {
-		while(!isTransmitEmpty())
+		if(!works)
+			return;
+		int tries=65535;
+		while(!isTransmitEmpty()) {
 			waittimes++;
+			tries--;
+			if(!tries){
+				works=false;
+				return;
+			}
+		}
 		outb(port, chr);
 		transmits++;
 	}
@@ -31,7 +40,7 @@ namespace MTGosHAL {
 			*this << '\n';
 		return chr;
 	}
-	Serial::Serial() {
+	Serial::Serial(): works(true) {
 		uint32_t baud=115200;
 		port=*((uint16_t*)0x0400);
 		union {

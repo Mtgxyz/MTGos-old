@@ -63,7 +63,7 @@ namespace MTGosHAL {
 		//TODO add checking for shift, and so on
 		debug << "Keyboard interrupt received.\nGot: 0x" << Base::HEXADECIMAL << (int)scancode << " -> 0x" << (int)keycode << ".\n";
 	}
-	Keyboard::Keyboard(): shift(false), numlock(true), caps(false), scrollock(false) {
+	Keyboard::Keyboard(): numlock(true), caps(false), scrollock(false) {
 		if(!idt.request(0x21, (void(*)(struct cpu_state*))&MTGosHAL::Keyboard::handleIRQ1)) {
 			debug << "Could not get an handler for IRQ1 (Keyboard)\n";
 			return;

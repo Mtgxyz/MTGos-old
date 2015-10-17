@@ -14,7 +14,7 @@ namespace MTGosHAL {
 			auto getChar() -> char;
 			auto sendCommand(uint8_t command) -> void;
 			static auto handleIRQ1(struct cpu_state* cpu) -> void;
-			bool shift, numlock, caps, scrollock;
+			bool numlock, caps, scrollock;
 		public:
 			Keyboard();
 	};
