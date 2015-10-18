@@ -5,6 +5,7 @@
 #include <gdt.hpp>
 #include <idt.hpp>
 #include <keyboard.hpp>
+#include <Multitasking.h>
 extern "C" void intr_stub_0(void);
 namespace MTGosHAL {
 	Serial debug;
@@ -13,6 +14,7 @@ namespace MTGosHAL {
 	Keyboard in;
 	IDT idt;
 	GDT gdt;
+	Multitasking tasks;
 	void main() {
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;

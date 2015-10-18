@@ -305,7 +305,7 @@ intr_common_handler:
 	push %eax
 	push %esp
 	call handleINT
-	add $4, %esp
+	mov %eax, %esp
 	pop %eax
 	pop %ebx
 	pop %ecx

@@ -3,7 +3,7 @@
 #include <serial.hpp>
 #include <keyboard.hpp>
 #include <keymap_DE.hpp>
-auto handleIRQ(struct cpu_state* cpu) -> void {
+auto handleIRQ(struct cpu_state* cpu) -> struct cpu_state* {
 	return MTGosHAL::in.handleIRQ1(cpu);
 }
 namespace MTGosHAL {
@@ -14,22 +14,22 @@ namespace MTGosHAL {
 		}
 		buf[15]='\0';
 		if(len)
-			len--;			
+			len--;
 		return chr;
 	}
 	auto Keyboard::sendCommand(uint8_t command) -> void {
 		while((inb(0x64) & 0x2));
 		outb(0x60, command);
 	}
-	auto Keyboard::handleIRQ1(struct cpu_state* cpu) -> void {
+	auto Keyboard::handleIRQ1(struct cpu_state* cpu) -> struct cpu_state* {
 		uint8_t keycode=0,scancode=inb(0x60);
 		if(scancode==0xFA) {
 			response=false;
-			return;
+			return cpu;
 		} else if(response && scancode == 0xFE) {
 			sendCommand(0xED);
 			outb(0x60, (scrolllock) + (numlock<<1) + (capslock<<2));
-			return;
+			return cpu;
 		}
 		debug << "Keyboard interrupt received.\nGot: 0x" << Base::HEXADECIMAL << (int)scancode;
 		bool break_code=false;
@@ -44,24 +44,24 @@ namespace MTGosHAL {
 		if(e0_code) {
 			if((scancode==0x2A) || (scancode = 0x36)) {
 				e0_code = false;
-				return;
+				return cpu;
 			}
 			keycode=keyboardKeycodes[1][scancode];
 			e0_code=false;
 		} else if (e1_code == 2) {
 			e1_prev |= ((uint16_t) scancode << 8);
 			//TODO. translate it, although I might not even use this code
-			return;
+			return cpu;
 		} else if (e1_code) {
 			e1_prev = scancode;
 			e1_code++;
-			return;
+			return cpu;
 		} else if (scancode == 0xE0) {
 			e0_code = true;
-			return;
+			return cpu;
 		} else if (scancode == 0xE1) {
 			e1_code = true;
-			return;
+			return cpu;
 		} else {
 			keycode=keyboardKeycodes[0][scancode];
 		}
@@ -79,7 +79,7 @@ namespace MTGosHAL {
 		//0x38 = Alt
 		if(keydowns[0x38])
 			tableID^=4;
-		
+
 		//0x45 = Numlock
 		if(keycode==0x45)
 			numlock=!numlock;
@@ -100,9 +100,10 @@ namespace MTGosHAL {
 		if(!break_code)
 			out << keymap[tableID][keycode];
 		debug << " -> 0x" << (int)keycode << ".\n";
+		return cpu;
 	}
 	Keyboard::Keyboard(): numlock(true), capslock(false), scrolllock(false), response(false) {
-		if(!idt.request(0x21, (void(*)(struct cpu_state*))&handleIRQ)) {
+		if(!idt.request(0x21, (struct cpu_state*(*)(struct cpu_state*))&handleIRQ)) {
 			debug << "Could not get an handler for IRQ1 (Keyboard)\n";
 			return;
 		}

@@ -9,6 +9,7 @@ namespace MTGosHAL {
 	class Keyboard;
 	class GDT;
 	class IDT;
+	class Multitasking;
 	enum class BG_color: uint16_t;
 	enum class FG_color: uint16_t;
 	extern Serial debug;
@@ -17,5 +18,6 @@ namespace MTGosHAL {
 	extern Keyboard in;
 	extern GDT gdt;
 	extern IDT idt;
+	extern Multitasking tasks;
 }
 #endif
