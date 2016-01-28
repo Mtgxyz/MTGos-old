@@ -1,10 +1,8 @@
-all: x86
-
-x86:
-	make -C x86
-
+include ../../kernel.settings
+all: 
+	make -C $(arch)
 clean:
 	rm -rf hal.o
-	make -C x86 clean
+	make -C $(arch) clean
 
-.PHONY: all x86 clean
+.PHONY: all clean
