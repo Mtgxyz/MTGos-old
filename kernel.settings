@@ -1,6 +1,7 @@
 MODE = debug
 #MODE = release # enables optimization
 
+export PATH := $(HOME)/opt/bin:$(PATH)
 #PREFIX =
 PREFIX = i686-elf-
 
