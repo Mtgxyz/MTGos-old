@@ -11,6 +11,8 @@
 .global _start
 _start:
 	mov $kernel_stack, %esp
+	push %ebx
+	push %eax
 	call init
 _stop:
 	cli

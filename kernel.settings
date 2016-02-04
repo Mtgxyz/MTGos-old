@@ -1,5 +1,6 @@
-MODE = debug
-#MODE = release # enables optimization
+arch = x86
+#MODE = debug
+MODE = release # enables optimization
 
 export PATH := $(HOME)/opt/bin:$(PATH)
 #PREFIX =
@@ -9,6 +10,6 @@ ifeq ($(MODE),debug)
   	CFLAGS += -g3 -DDEBUG
 	CPPFLAGS += -g3 -DDEBUG
 else
-#	CFLAGS +=
-#	CPPFLAGS +=
+	CFLAGS += -O2
+	CPPFLAGS += -O2
 endif
