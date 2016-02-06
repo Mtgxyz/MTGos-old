@@ -2,6 +2,7 @@
 #define _PMM_HPP
 #include <stdint.h>
 #include <multiboot.h>
+namespace MTGosHAL {
 class PMM {
 private:
 	uint32_t bitmap[0x8000]; //Enough for 4 GB
@@ -14,4 +15,5 @@ public:
 	auto operator()(int pages) -> void*; //alloc_multipage
 	
 };
+}
 #endif

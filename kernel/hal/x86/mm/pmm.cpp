@@ -2,6 +2,7 @@
 #include <multiboot.h>
 extern "C" const int kernel_start;
 extern "C" const int kernel_end; //those are voids actually
+namespace MTGosHAL {
 PMM::PMM(struct multiboot_info * mb_info) {
 	for(int i=0;i<0x8000;i++)
 		bitmap[i]=0;
@@ -32,4 +33,28 @@ auto PMM::markUsed(void * addr) -> void {
 	int bit=1<<(address&0x1F);
 	bitmap[index]&=~bit;
 }
-//auto PMM::operator >> (void * &addr) -> PMM &;
+auto PMM::operator >> (void * &addr) -> PMM & {
+	for(int i=0;i<0x8000;i++) {
+		if(!bitmap[i])
+			continue;
+		for(int j=0;j<32;j++) {
+			if(bitmap[i]&(1<<j)) {
+				//We found a free page!
+				bitmap[i]&=(1<<j);
+				addr=(void*)(((i<<5)+j)<<12);
+				return *this;
+			}
+		}
+	}
+	addr=nullptr;
+	return *this;
+}
+auto operator << (const void * addr) -> PMM & {
+	unsigned int address=(unsigned int)addr;
+	address>>=12;
+	int index=address>>5;
+	int bit=1<<(address&0x1F);
+	bitmap[index]|=bit;
+	return *this;
+}
+}
