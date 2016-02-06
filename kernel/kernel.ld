@@ -4,6 +4,7 @@ OUTPUT_ARCH(i386:i386)
 SECTIONS
 {
 	. = 0x100000;
+	kernel_start = .;
 	.text : {
 		*(multiboot)
 		*(.text)
@@ -25,4 +26,6 @@ SECTIONS
 	.bss ALIGN(4096) : {
 		*(.bss)
 	}
+	. = ALIGN(4096);
+	kernel_end = .;
 }

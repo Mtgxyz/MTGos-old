@@ -1,12 +1,11 @@
-CROSSPATH=$HOME/opt # You can change it to whatever you want
+CROSSPATH=/usr/local # You can change it to whatever you want
 export PATH=$CROSSPATH/bin:$PATH
 function buildscript() {
-	date "[+%c] " | tr -d '\n' | tee buildlog
-	echo "Building binutils for $1" | tee buildlog
+	echo "[$(date +%c)] Building binutils for $1" | tee buildlog
 	mkdir build-binutils
 	cd build-binutils
 	../binutils-2.26/configure --prefix=$CROSSPATH --target=$1 --with-sysroot --disable-nls --disable-werror
-	make -j2
+	make -j8
 	make install
 	cd ..
 	rm -rf build-binutils
@@ -15,8 +14,8 @@ function buildscript() {
 	mkdir build-gcc
 	cd build-gcc
 	../gcc-5.3.0/configure --prefix=$CROSSPATH --target=$1 --disable-nls --enable-languages=c,c++ --without-headers
-	make all-gcc
-	make all-target-libgcc
+	make all-gcc -j8
+	make all-target-libgcc -j8
 	make install-gcc
 	make install-target-libgcc
 	cd ..
@@ -33,11 +32,11 @@ echo "Untaring..."
 tar -xf gcc-5.3.0.tar.bz2
 tar -xf binutils-2.26.tar.bz2
 cd gcc-5.3.0
-tar -xf mpc-1.0.3.tar.gz
+tar -xf ../mpc-1.0.3.tar.gz
 mv mpc-1.0.3 mpc
-tar -xf mpfr-3.1.3.tar.xz
+tar -xf ../mpfr-3.1.3.tar.xz
 mv mpfr-3.1.3 mpfr
-tar -xf gmp-6.1.0.tar.xz
+tar -xf ../gmp-6.1.0.tar.xz
 mv gmp-6.1.0 gmp
 cd ..
 echo "Preperation done. Beginning the compilation now."
@@ -45,5 +44,6 @@ buildscript i686-elf #x86 port
 buildscript arm-none-eabi #ARM ports (3DS, pi)
 buildscript armeb-eabi #Wii port
 buildscript ppc-elf #Wii port
+buildscript x86_64-elf #x86_64 port
 rm -rf gcc* binutils* mpc* mpfr* gmp*
 echo "Done! Have fun with your cross compilers!"

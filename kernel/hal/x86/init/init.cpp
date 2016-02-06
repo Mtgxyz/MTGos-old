@@ -44,12 +44,17 @@ namespace MTGosHAL {
 	}
 }
 typedef void (*constructor)();
+typedef void (*destructor)();
 extern "C" constructor start_ctors;
 extern "C" constructor end_ctors;
+extern "C" destructor start_dtors;
+extern "C" destructor end_dtors;
 extern "C" void init(int eax, struct multiboot_info* ebx) {
 	for(constructor* i = &start_ctors; i != &end_ctors; ++i)
 		(*i)();
 	MTGosHAL::main(eax, ebx);
+	for(destructor* i = &start_dtors; i != &end_dtors; i++)
+		(*i)();
 }
 extern "C" void __cxa_pure_virtual() {
 	MTGosHAL::debug << "A pure virtual function just got called.\n";
