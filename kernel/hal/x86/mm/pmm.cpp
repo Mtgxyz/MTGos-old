@@ -49,7 +49,7 @@ auto PMM::operator >> (void * &addr) -> PMM & {
 	addr=nullptr;
 	return *this;
 }
-auto operator << (const void * addr) -> PMM & {
+auto PMM::operator << (const void * addr) -> PMM & {
 	unsigned int address=(unsigned int)addr;
 	address>>=12;
 	int index=address>>5;
