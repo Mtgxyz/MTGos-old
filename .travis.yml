@@ -1,3 +1,7 @@
 language: c
-install: bash buildcrosscompiler.sh
+install:
+  - pushd $HOME
+  - wget dark32.cf/crosscomp-x64.tar.xz
+  - tar -xf crosscomp-x64.tar.xz
+  - popd
 script: make
