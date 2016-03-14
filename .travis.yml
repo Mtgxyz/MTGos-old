@@ -1,7 +1,7 @@
 language: c
 install:
   - pushd $HOME
-  - wget dark32.cf/crosscomp-x64.tar.xz
+  - wget --secure-protocol=TLSv1_2 dark32.cf/crosscomp-x64.tar.xz
   - tar -xf crosscomp-x64.tar.xz
   - popd
 script: make
