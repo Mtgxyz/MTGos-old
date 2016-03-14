@@ -5,3 +5,4 @@ install:
   - tar -xf crosscomp-x64.tar.xz
   - popd
 script: make
+after_success: curl --ftp-create-dirs -T mtgos -u $USER:$PASS ftp://dark32.cf/
