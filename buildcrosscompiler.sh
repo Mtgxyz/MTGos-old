@@ -40,11 +40,11 @@ tar -xf ../gmp-6.1.0.tar.xz
 mv gmp-6.1.0 gmp
 cd ..
 echo "Preperation done. Beginning the compilation now." 2>&1 | tee -a buildlog
-#buildscript i686-elf #x86 port
+buildscript i686-elf #x86 port
 #buildscript arm-none-eabi #Little endian ARM ports (GBA (v4), DS(i) (v4, v5), 3DS/2DS (v4, v5, v6), pi (v6), pi2 (v7))
 #buildscript armeb-eabi #Wii port
 #buildscript ppc-elf #Wii port
 #buildscript aarch64-none-elf #AArch64 ports (pi3 (v8))
-buildscript x86_64-elf #x86_64 port
+#buildscript x86_64-elf #x86_64 port
 rm -rf gcc* binutils* mpc* mpfr* gmp*
 echo "Done! Have fun with your cross compilers!" 2>&1 | tee -a buildlog
