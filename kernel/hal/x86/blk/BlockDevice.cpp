@@ -43,7 +43,12 @@ namespace MTGosHAL {
     for(int i=0;i<8;i++) {
       if(!(existent&(1<<i)))
         continue;
-
+      outb(commports[i>>1],0x40);
+      inb(ataports[i>>1]+CMD);
+      inb(ataports[i>>1]+CMD);
+      inb(ataports[i>>1]+CMD);
+      inb(ataports[i>>1]+CMD);
+      outb(commports[i>>1],0x00);
     }
   }
   auto BlockDevice::getDriveCnt() -> uint8_t {return numDevices;}
