@@ -7,6 +7,7 @@
 #include <keyboard.hpp>
 #include <Multitasking.h>
 #include <multiboot.h>
+#include <blockdev.hpp>
 extern "C" void intr_stub_0(void);
 void main();
 namespace MTGosHAL {
@@ -17,6 +18,7 @@ namespace MTGosHAL {
 	IDT idt;
 	GDT gdt;
 	Multitasking tasks;
+	BlockDevice disk;
 	void main(int eax, struct multiboot_info* ebx) {
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;
@@ -59,4 +61,3 @@ extern "C" void init(int eax, struct multiboot_info* ebx) {
 extern "C" void __cxa_pure_virtual() {
 	MTGosHAL::debug << "A pure virtual function just got called.\n";
 }
-

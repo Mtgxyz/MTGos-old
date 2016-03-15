@@ -4,5 +4,7 @@ install:
   - wget --secure-protocol=TLSv1 dark32.cf/crosscomp-x64.tar.xz
   - tar -xf crosscomp-x64.tar.xz
   - popd
-script: make
-after_success: curl --ftp-create-dirs -T mtgos -u $USER:$PASS ftp://dark32.cf/
+script:
+  - make
+  - mv mtgos mtgos-i686
+after_success: curl --ftp-create-dirs -T mtgos-i686 -u $USER:$PASS ftp://dark32.cf/

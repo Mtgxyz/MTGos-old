@@ -1,7 +1,7 @@
-set -o errexit
 CROSSPATH=$HOME/opt # You can change it to whatever you want
 export PATH=$CROSSPATH/bin:$PATH
 mkdir $CROSSPATH
+set -o errexit
 function buildscript() {
 	echo "[$(date +%c)] Building binutils for $1." | tee -a buildlog
 	mkdir build-binutils

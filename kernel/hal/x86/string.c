@@ -13,4 +13,13 @@ void memmove(void* dst, void* src, uint32_t size) {
 			to[i]=from[i]; //This would get optimized by gcc to memmove(dst, src, size); if optimizations are enabled.
 	}
 }
+uint32_t strlen(const char* str) {
+	uint32_t i=0;
+	char* str2=(char*)((int)str);
+	while(*str2) {
+		i++;
+		str2++;
+	}
+	return i;
+}
 #pragma GCC pop_options
