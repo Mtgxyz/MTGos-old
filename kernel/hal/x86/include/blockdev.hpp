@@ -11,8 +11,8 @@ namespace MTGosHAL {
     ~BlockDevice();
     auto getDriveCnt() -> uint8_t;
     auto getDriveNumByName(const char *) -> uint8_t; //Returns -1 if device is not existent
-    auto readSector(uint32_t drv, uint64_t sectorNum, uint8_t *buf); //Has to be at least 512 bytes big!
-    auto readSectors(uint32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf); //Has to be at least num*512 bytes big!
+    auto readSector(uint8_t drv, uint64_t sectorNum, uint8_t *buf) -> void; //Has to be at least 512 bytes big!
+    auto readSectors(uint8_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void; //Has to be at least num*512 bytes big!
 
   };
 }

@@ -71,4 +71,22 @@ namespace MTGosHAL {
     return drivenum;
   }
   BlockDevice::~BlockDevice() {};
+  auto BlockDevice::readSector(uint8_t drv, uint64_t sectorNum, uint8_t *buf) -> void {
+    if(!(existent&(1<<drv)))
+      return;
+    outb(ataports[drv>>1]+DRV, 0x40 | (drv&1)<<4);
+    outb(ataports[drv>>1]+SECTOR_CNT, 0);
+    outb(ataports[drv>>1]+LBAlo, (uint8_t)(sectorNum>>24));
+    outb(ataports[drv>>1]+LBAmid, (uint8_t)(sectorNum>>32));
+    outb(ataports[drv>>1]+LBAhi, (uint8_t)(sectorNum>>40));
+    outb(ataports[drv>>1]+SECTOR_CNT, 1);
+    outb(ataports[drv>>1]+LBAlo, (uint8_t)(sectorNum));
+    outb(ataports[drv>>1]+LBAmid, (uint8_t)(sectorNum>>8));
+    outb(ataports[drv>>1]+LBAhi, (uint8_t)(sectorNum>>16));
+    outb(ataports[drv>>1]+CMD, 0x24);
+    while(inb(ataports[drv>>1]+CMD)&0x80);
+    uint16_t *bufw=(uint16_t *)buf;
+    for(int i=0;i<256;i++)
+      bufw[i]=inb(ataports[drv>>1]);
+  }
 }
