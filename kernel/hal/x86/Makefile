@@ -6,7 +6,7 @@ CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc
 ASFLAGS = -m32
 CFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie
-CPPFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie
+CPPFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder
 LDFLAGS = -r -melf_i386
 
 

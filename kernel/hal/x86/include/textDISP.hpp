@@ -48,7 +48,7 @@ namespace MTGosHAL {
 			uint16_t* vmem=(uint16_t*)0xB8000;
 			auto putChar(char c) -> void;
 		public:
-			Screen() {
+			Screen(): fg(FG_color::WHITE), bg(BG_color::BLACK) {
 				clrscr();
 			}
 			template <typename T>
