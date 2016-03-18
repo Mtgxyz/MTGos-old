@@ -54,7 +54,7 @@ namespace MTGosHAL {
   auto BlockDevice::getDriveCnt() -> uint8_t {return numDevices;}
   auto BlockDevice::getDriveNumByName(const char * name) -> uint8_t {
     if(strlen(name)!=5)
-      return -1; //Format is ATA[0-3][sl] (regex)
+      return -1; //Format is ATA[0-3][sm] (regex)
     if((name[0]!=name[2])||(name[2]!='A'))
       return -1;
     if(name[1]!='T')
@@ -62,7 +62,7 @@ namespace MTGosHAL {
     uint8_t drivenum=name[3]-0x30;
     if(drivenum>3)
       return -1;
-    if((name[4]!='s')&&(name[4]!='l'))
+    if((name[4]!='s')&&(name[4]!='m'))
       return -1;
     drivenum<<=1;
     drivenum+=(name[4]=='s')?1:0;
@@ -84,6 +84,9 @@ namespace MTGosHAL {
     outb(ataports[drv>>1]+LBAmid, (uint8_t)(sectorNum>>8));
     outb(ataports[drv>>1]+LBAhi, (uint8_t)(sectorNum>>16));
     outb(ataports[drv>>1]+CMD, 0x24);
+    inb(ataports[drv>>1]+CMD);
+    inb(ataports[drv>>1]+CMD);
+    inb(ataports[drv>>1]+CMD);
     while(inb(ataports[drv>>1]+CMD)&0x80);
     uint16_t *bufw=(uint16_t *)buf;
     for(int i=0;i<256;i++)

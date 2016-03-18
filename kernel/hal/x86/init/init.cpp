@@ -40,7 +40,11 @@ namespace MTGosHAL {
 		idt.setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.apply();
-		sti();
+		char sec[513];
+		sec[512]='\0';
+		disk.readSector(disk.getDriveNumByName("ATA0m"),1,(uint8_t *)sec);
+		out << sec;
+		//sti();
 		::main();
 		for(;;);
 	}
