@@ -5,7 +5,7 @@
 #include <gdt.hpp>
 #include <idt.hpp>
 #include <keyboard.hpp>
-#include <Multitasking.h>
+#include <Multitasking.hpp>
 #include <multiboot.h>
 #include <blockdev.hpp>
 extern "C" void intr_stub_0(void);
@@ -30,9 +30,10 @@ namespace MTGosHAL {
 		gdt.setEntry(2, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_DATASEG | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT);
 		gdt.setEntry(3, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_CODESEG | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT | GDT_FLAG_RING3);
 		gdt.setEntry(4, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_DATASEG | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT | GDT_FLAG_RING3);
-		gdt.setEntry(5, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_TSS     | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT);
-		gdt.setEntry(6, 0, 0xfffff, GDT_FLAG_SEGMENT | GDT_FLAG_32_BIT | GDT_FLAG_TSS     | GDT_FLAG_4K_GRAN | GDT_FLAG_PRESENT);
+		gdt.setEntry(5, (uint32_t)tasks.tss, sizeof(tasks.tss), GDT_FLAG_RING3 | GDT_FLAG_TSS | GDT_FLAG_PRESENT);
+		gdt.setEntry(6, 0, 0xfffff, GDT_FLAG_RING3 | GDT_FLAG_TSS | GDT_FLAG_PRESENT);
 		gdt.apply();
+		asm volatile("ltr %%ax" : : "a"(5<<3));
 		debug << "We are now creating the IDT.\n";
 		for(int i=0;i<256;i++) {
 			idt.setEntry(i, (void *)((uint32_t)&intr_stub_0+i*16), SEG_KERNEL, IDT_INTERRUPT_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
@@ -40,8 +41,8 @@ namespace MTGosHAL {
 		idt.setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.apply();
-		sti();
 		::main();
+		sti();
 		for(;;);
 	}
 }

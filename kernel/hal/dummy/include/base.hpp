@@ -8,6 +8,7 @@ namespace MTGosHAL {
 	class Screen;
 	class Keyboard;
 	class Multitasking;
+	class BlockDevice;
 	enum class BG_color: uint16_t;
 	enum class FG_color: uint16_t;
 	extern Serial debug;
@@ -15,5 +16,6 @@ namespace MTGosHAL {
 	extern Screen err;
 	extern Keyboard in;
 	extern Multitasking tasks;
+	extern BlockDevice disk;
 }
 #endif

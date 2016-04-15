@@ -10,7 +10,7 @@ PMM::PMM(struct multiboot_info * mb_info) {
 	struct multiboot_mmap_entry* mmap_end = (struct multiboot_mmap_entry*) ((unsigned int) mb_info->mmap_addr + mb_info->mmap_length);
 	while (mmap < mmap_end) {
 		if (mmap->type == 1) {
-			// Der Speicherbereich ist frei, entsprechend markieren
+			// Memory is free
 			uintptr_t addr = mmap->addr;
 			uintptr_t end_addr = addr + mmap->len;
 			while (addr < end_addr) {

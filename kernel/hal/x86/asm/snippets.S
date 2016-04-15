@@ -303,9 +303,17 @@ intr_common_handler:
 	push %ecx
 	push %ebx
 	push %eax
+	//Load kernel datasegs
+	mov $0x10, %ax
+	mov %ax, %ds
+	mov %ax, %es
 	push %esp
 	call handleINT
 	mov %eax, %esp
+	//Load user datasegs
+	mov $0x23, %ax
+	mov %ax, %ds
+	mov %ax, %es
 	pop %eax
 	pop %ebx
 	pop %ecx
@@ -313,7 +321,7 @@ intr_common_handler:
 	pop %esi
 	pop %edi
 	pop %ebp
-	// Fehlercode und Interruptnummer vom Stack nehmen
+	// Take error code and interrupt number from stack
 	add $8, %esp
-	// Ruecksprung zum unterbrochenen Code
+	// Exit interrupt
 	iret
