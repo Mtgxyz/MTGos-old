@@ -14,10 +14,8 @@ _start:
 	push %ebx
 	push %eax
 	call init
-_stop:
-	cli
-	hlt
-	jmp _stop
+_exit:
+	int $0x1F
 .section .bss
 .space 8192
 kernel_stack:

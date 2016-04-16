@@ -8,6 +8,7 @@
 #include <Multitasking.hpp>
 #include <multiboot.h>
 #include <blockdev.hpp>
+#include <pmm.hpp>
 extern "C" void intr_stub_0(void);
 void main();
 namespace MTGosHAL {
@@ -19,6 +20,7 @@ namespace MTGosHAL {
 	GDT gdt;
 	Multitasking tasks;
 	BlockDevice disk;
+	PMM mm;
 	void main(int eax, struct multiboot_info* ebx) {
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;
@@ -41,6 +43,7 @@ namespace MTGosHAL {
 		idt.setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.apply();
+		mm.init(ebx);
 		::main();
 		sti();
 		for(;;);

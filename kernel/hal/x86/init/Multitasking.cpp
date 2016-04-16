@@ -3,12 +3,13 @@
 #include <Multitasking.hpp>
 #include <serial.hpp>
 #include <blockdev.hpp>
+#include <pmm.hpp>
 auto schedule(struct cpu_state* cpu) -> struct cpu_state* {
     return MTGosHAL::tasks.schedule(cpu);
 }
 namespace MTGosHAL {
 
-Multitasking::Multitasking(): current_task(-1), num_tasks(2)
+Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 {
   for(int i=0;i<32;i++) {
     if(i==2)
@@ -16,16 +17,19 @@ Multitasking::Multitasking(): current_task(-1), num_tasks(2)
     tss[i]=0;
   }
   tss[2]=0x10;
-    task_states[0] = initTask(stack_a, user_stack_a, task_a);
-    task_states[1] = initTask(stack_b, user_stack_b, task_b);
+    //task_states[0] = initTask(stack_a, user_stack_a, task_a);
+    //task_states[1] = initTask(stack_b, user_stack_b, task_b);
     if(!idt.request(0x20,::schedule)) {
         err << "Could not start multitasking\nFatal error; Kernel halted!\n";
         while(true);
             asm volatile("cli; hlt");
     }
 }
-auto Multitasking::initTask(uint8_t* stck, uint8_t* user_stck, void(* entry)()) -> struct cpu_state*
+auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
 {
+    void *tmp1, *tmp2;
+    mm >> tmp1 >> tmp2;
+    uint8_t *stack=(uint8_t*)tmp1, *user_stack=(uint8_t*)tmp2;
     struct cpu_state new_state = {
         0, //EAX
         0, //EBX
@@ -39,11 +43,19 @@ auto Multitasking::initTask(uint8_t* stck, uint8_t* user_stck, void(* entry)()) 
         (uint32_t) entry, //EIP
         0x18 | 0x03, //CS
         0x202, // EFLAGS
-        (uint32_t) user_stck+4096, //ESP
+        (uint32_t) user_stack+4096, //ESP
         0x20 | 0x03 //SS
     };
-    struct cpu_state* state = (struct cpu_state*)(stck+4096-sizeof(new_state));
+    struct cpu_state* state = (struct cpu_state*)(stack+4096-sizeof(new_state));
     *state = new_state;
+    //Create new task class
+    Task* task = new Task(state);
+    if(first_task)
+      first_task->addTask(task);
+    else {
+      first_task=task;
+    }
+    curr_task=first_task;
     return state;
 }
 
@@ -68,14 +80,25 @@ auto Multitasking::task_b() -> void
 }
 auto Multitasking::schedule(struct cpu_state* cpu) -> struct cpu_state*
 {
-    if(current_task >= 0) {
-        task_states[current_task] = cpu;
-    }
-    current_task++;
-    current_task%= num_tasks;
-    cpu=task_states[current_task];
-    tss[1]=(uint32_t)(cpu+1);
-    return cpu;
+  Task* next=curr_task->pause(cpu);
+  if(next==nullptr)
+    next=first_task;
+  curr_task=next;
+  return next->unpause();
 }
-
+Task::Task(struct cpu_state* cpu): cpu_state(cpu), next(nullptr) {};
+//This is run every time this task is chosen by the scheduler
+auto Task::unpause() -> struct cpu_state* {
+  return cpu_state;
+}
+//This is run every time the timer ticks and a task is running
+auto Task::pause(struct cpu_state* cpu) -> Task * {
+  cpu_state=cpu;
+  return next;
+}
+auto Task::addTask(Task* task) -> void {
+  if(next)
+    return next->addTask(task);
+  next=task;
+}
 } // namespace MTGosHAL
