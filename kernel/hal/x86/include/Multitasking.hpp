@@ -14,8 +14,6 @@ namespace MTGosHAL {
             uint32_t tss[32];
         protected:
         private:
-            static auto task_a() -> void;
-            static auto task_b() -> void;
             Task* first_task;
             Task* curr_task;
     };
@@ -29,6 +27,7 @@ namespace MTGosHAL {
       auto unpause() -> struct cpu_state*;
       auto pause(struct cpu_state*) -> Task *;
       auto addTask(Task*) -> void;
+      auto hasNext() -> bool;
     };
 
 } // namespace MTGosHAL

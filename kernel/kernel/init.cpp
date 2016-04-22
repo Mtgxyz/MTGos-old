@@ -6,20 +6,28 @@
 #include <Multitasking.h>
 #include <blockdev.hpp>
 using namespace MTGosHAL;
+void pid_null() {
+  for(;;);
+}
 void task_a() {
-  MTGosHAL::out << "a";
+  while(true)
+    MTGosHAL::out << "a";
 }
 void task_b() {
-  MTGosHAL::out << "b";
+  while(true)
+    MTGosHAL::out << "b";
 }
 void task_c() {
-  MTGosHAL::out << "c";
+  while(true)
+    MTGosHAL::out << "c";
 }
 void task_d() {
-  MTGosHAL::out << "d";
+  while(true)
+    MTGosHAL::out << "d";
 }
 void main() {
     MTGosHAL::out << "Initializing Kernel!\n";
+    MTGosHAL::tasks.initTask(&pid_null);
     MTGosHAL::tasks.initTask(&task_a);
     MTGosHAL::tasks.initTask(&task_b);
     MTGosHAL::tasks.initTask(&task_c);

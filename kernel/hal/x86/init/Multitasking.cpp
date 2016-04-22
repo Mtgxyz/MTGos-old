@@ -55,40 +55,24 @@ auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
     else {
       first_task=task;
     }
-    curr_task=first_task;
     return state;
-}
-
-auto Multitasking::task_a() -> void
-{
-    while(true) {
-      char arr[513];
-      arr[512]=0;
-      disk.readSector(disk.getDriveNumByName("ATA0m"),0,(uint8_t*)arr);
-      out << arr;
-    }
-}
-
-auto Multitasking::task_b() -> void
-{
-  while(true) {
-    char arr[513];
-    arr[512]=0;
-    disk.readSector(disk.getDriveNumByName("ATA0m"),1,(uint8_t*)arr);
-    out << arr;
-  }
 }
 auto Multitasking::schedule(struct cpu_state* cpu) -> struct cpu_state*
 {
-  Task* next=curr_task->pause(cpu);
-  if(next==nullptr)
+  Task* next=nullptr;
+  if(curr_task) {
+    next=curr_task->pause(cpu);
+  }
+  if (!next) {
     next=first_task;
+  }
   curr_task=next;
   return next->unpause();
 }
 Task::Task(struct cpu_state* cpu): cpu_state(cpu), next(nullptr) {};
 //This is run every time this task is chosen by the scheduler
 auto Task::unpause() -> struct cpu_state* {
+  MTGosHAL::tasks.tss[1] = (uint32_t) (cpu_state + 1);
   return cpu_state;
 }
 //This is run every time the timer ticks and a task is running
@@ -100,5 +84,8 @@ auto Task::addTask(Task* task) -> void {
   if(next)
     return next->addTask(task);
   next=task;
+}
+auto Task::hasNext() -> bool {
+  return next!=nullptr;
 }
 } // namespace MTGosHAL
