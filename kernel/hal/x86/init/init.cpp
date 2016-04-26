@@ -10,7 +10,7 @@
 #include <blockdev.hpp>
 #include <pmm.hpp>
 extern "C" void intr_stub_0(void);
-void main();
+void main(void ** programs);
 namespace MTGosHAL {
 	Serial debug;
 	Screen out;
@@ -44,7 +44,17 @@ namespace MTGosHAL {
 		idt.setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.apply();
 		mm.init(ebx);
-		::main();
+		multiboot_mod_list *mods = (multiboot_mod_list*) ebx->mods_addr;
+		void** progs=nullptr;
+		void* tmp;
+		mm >> tmp;
+		progs=(void**)tmp;
+		uint32_t i;
+		for(i=0;i<(ebx->mods_count<1023?ebx->mods_count:1023);i++) { //Basically until MIN(ebx->mods_count, 1023), as we only support loading up to 1023 programs directly.
+			progs[i]=(void*)(mods[i].mod_start);
+		}
+		progs[i]=nullptr;
+		::main(progs);
 		sti();
 		for(;;);
 	}

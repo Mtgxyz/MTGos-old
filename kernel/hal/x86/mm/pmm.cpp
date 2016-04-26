@@ -57,6 +57,13 @@ auto PMM::init(struct multiboot_info * mb_info) -> void {
 		addr+=0x1000;
 	}
 	markUsed(nullptr);
+	multiboot_mod_list *mods = (multiboot_mod_list*) mb_info->mods_addr;
+	for(uint32_t i=0;i<mb_info->mods_count;i++) {
+		markUsed((void*)((uint32_t)(&mods[i])&(~0xFFF))); //Mark all of the module table as used
+		for(uint32_t start=(uint32_t)(mods[i].mod_start)&(~0xFFF);start<(uint32_t)(mods[i].mod_end);start+=0x1000) {
+			markUsed((void*)start); //Protect all multiboot modules
+		}
+	}
 }
 auto PMM::markUsed(void * addr) -> void {
 	unsigned int address=(unsigned int)addr;

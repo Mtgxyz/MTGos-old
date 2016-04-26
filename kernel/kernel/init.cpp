@@ -5,6 +5,7 @@
 #include <keyboard.hpp>
 #include <Multitasking.h>
 #include <blockdev.hpp>
+#include <elf.hpp>
 using namespace MTGosHAL;
 void pid_null() {
   for(;;);
@@ -25,11 +26,14 @@ void task_d() {
   while(true)
     MTGosHAL::out << "d";
 }
-void main() {
-    MTGosHAL::out << "Initializing Kernel!\n";
-    MTGosHAL::tasks.initTask(&pid_null);
-    MTGosHAL::tasks.initTask(&task_a);
-    MTGosHAL::tasks.initTask(&task_b);
-    MTGosHAL::tasks.initTask(&task_c);
-    MTGosHAL::tasks.initTask(&task_d);
+void main(void** files) {
+  MTGosHAL::out << "Initializing Kernel!\n";
+  Elf32_Ehdr** programs=(Elf32_Ehdr**)files;
+  MTGosHAL::tasks.initTask(&pid_null);
+  for(int i=0;programs[i];i++) {
+    void(*start)()=(void(*)())load(programs[i]);
+    if(!start)
+      continue;
+    MTGosHAL::tasks.initTask(start);
+  }
 }
