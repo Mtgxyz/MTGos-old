@@ -8,7 +8,7 @@
 #include <Multitasking.hpp>
 #include <multiboot.h>
 #include <blockdev.hpp>
-#include <pmm.hpp>
+#include <qdpmm.hpp>
 extern "C" void intr_stub_0(void);
 void main(void ** programs);
 namespace MTGosHAL {
@@ -20,7 +20,7 @@ namespace MTGosHAL {
 	GDT gdt;
 	Multitasking tasks;
 	BlockDevice disk;
-	PMM mm;
+	QDPMM qdmm;
 	void main(int eax, struct multiboot_info* ebx) {
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;
@@ -43,16 +43,18 @@ namespace MTGosHAL {
 		idt.setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.apply();
-		mm.init(ebx);
+		qdmm.init(ebx);
 		multiboot_mod_list *mods = (multiboot_mod_list*) ebx->mods_addr;
 		void** progs=nullptr;
 		void* tmp;
-		mm >> tmp;
+		qdmm >> tmp;
 		progs=(void**)tmp;
 		uint32_t i;
 		for(i=0;i<(ebx->mods_count<1023?ebx->mods_count:1023);i++) { //Basically until MIN(ebx->mods_count, 1023), as we only support loading up to 1023 programs directly.
 			progs[i]=(void*)(mods[i].mod_start);
+			debug << "Found module!\n";
 		}
+		i++;
 		progs[i]=nullptr;
 		::main(progs);
 		sti();

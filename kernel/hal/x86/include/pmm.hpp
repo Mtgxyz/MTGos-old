@@ -1,19 +1,23 @@
 #ifndef _PMM_HPP
 #define _PMM_HPP
+#include <qdpmm.hpp>
 #include <stdint.h>
 #include <multiboot.h>
 namespace MTGosHAL {
 class PMM {
 private:
-	uint32_t bitmap[0x8000]; //Enough for 4 GB
+	uint16_t **pageTable;
+  QDPMM qdpmm;
 	auto markUsed(void * addr) -> void;
 public:
 	PMM();
-	auto init(struct multiboot_info*) -> void;
-	auto operator >> (void * &addr) -> PMM &; //alloc
-	auto operator << (const void * addr) -> PMM &; //free
-	auto operator()(int pages) -> void*; //alloc_multipage
-
+  template <typename T>
+  auto markUsed(T * addr, uint32_t length) -> void;
+  auto init(struct multiboot_info*) -> void;
+  template <typename T>
+  auto operator >> (T * &addr) -> QDPMM &; //alloc
+  template <typename T>
+  auto operator << (const T * addr) -> QDPMM &; //free
 };
 }
 #endif

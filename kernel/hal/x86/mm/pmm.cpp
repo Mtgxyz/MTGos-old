@@ -1,99 +1,43 @@
-#include <stdint.h>
-#include <base.hpp>
 #include <pmm.hpp>
-#include <multiboot.h>
-extern "C" const int kernel_start;
-extern "C" const int kernel_end; //those are voids actually
-void *operator new(size_t size) {
-	if(size>4096) {
-		asm("int $0x1F");
-	}
-	void *ptr;
-	MTGosHAL::mm >> ptr;
-	return ptr;
-}
-void *operator new[](size_t size)  {
-	if(size>4096) {
-		asm("int $0x1F");
-	}
-	void *ptr;
-	MTGosHAL::mm >> ptr;
-	return ptr;
-}
-void operator delete(void* p) {
-	MTGosHAL::mm << p;
-}
-void operator delete[](void* p) {
-	MTGosHAL::mm << p;
-}
-void operator delete(void* p, size_t size) {
-	MTGosHAL::mm << p;
-}
-void operator delete[](void* p, size_t size) {
-	MTGosHAL::mm << p;
-}
+//In this part, please remember that the address is split into 3 parts. Bitmap:
+// AAAA AAAA ABBB BBBB BBBB CCCC CCCC CCCC
+#define SPLIT1_FLAG 0xFF800000ul
+#define SPLIT1_SHIFT(a) (a)<<23
+#define SPLIT1_UNSHIFT(a) (a)>>23
+#define SPLIT2_FLAG 0x007FF000ul
+#define SPLIT2_SHIFT(a) (a)<<12
+#define SPLIT2_UNSHIFT(a) ((a)<<23)&0x7FF
+#define SPLIT3_FLAG 0x00000FFFul
+#define SPLIT3_SHIFT(a) (a)
+#define SPLIT3_UNSHIFT(a) (a)&0xFFF
 namespace MTGosHAL {
-PMM::PMM() {}
-auto PMM::init(struct multiboot_info * mb_info) -> void {
-	for(int i=0;i<0x8000;i++)
-		bitmap[i]=0;
-	struct multiboot_mmap_entry* mmap = (struct multiboot_mmap_entry*) mb_info->mmap_addr;
-	struct multiboot_mmap_entry* mmap_end = (struct multiboot_mmap_entry*) ((unsigned int) mb_info->mmap_addr + mb_info->mmap_length);
-	while (mmap < mmap_end) {
-		if (mmap->type == 1) {
-			// Memory is free
-			uintptr_t addr = mmap->addr;
-			uintptr_t end_addr = addr + mmap->len;
-			while (addr < end_addr) {
-				*this << (void*) addr;
-				addr += 0x1000;
-			}
-		}
-		mmap++;
-	}
-	unsigned int addr = (unsigned int) &kernel_start;
-	while(addr < (unsigned int) &kernel_end) {
-		markUsed((void*)addr);
-		addr+=0x1000;
-	}
-	markUsed(nullptr);
-	multiboot_mod_list *mods = (multiboot_mod_list*) mb_info->mods_addr;
-	for(uint32_t i=0;i<mb_info->mods_count;i++) {
-		markUsed((void*)((uint32_t)(&mods[i])&(~0xFFF))); //Mark all of the module table as used
-		for(uint32_t start=(uint32_t)(mods[i].mod_start)&(~0xFFF);start<(uint32_t)(mods[i].mod_end);start+=0x1000) {
-			markUsed((void*)start); //Protect all multiboot modules
-		}
-	}
+PMM::PMM(): qdpmm() {
 }
-auto PMM::markUsed(void * addr) -> void {
-	unsigned int address=(unsigned int)addr;
-	address>>=12;
-	int index=address>>5;
-	int bit=1<<(address&0x1F);
-	bitmap[index]&=~bit;
+template <typename T>
+auto PMM::markUsed(T * addr, uint32_t length) -> void {
+  uint32_t add=(uint32_t)addr;
+  uint32_t pagetid = SPLIT1_UNSHIFT(add);
+  if(length > 256*1024*1024) //Maximum allocation limit is 256MB
+    return;
+  if(!pageTable[pagetid]) {
+    void* temp;
+    qdpmm >> temp;
+    pageTable[pagetid]=(uint16_t*)temp;
+    markUsed(pageTable[pagetid],1024); //Not a mistake
+  }
+  uint16_t counter=1;
+  for(uint32_t curr_addr=add+length;curr_addr>=add;curr_addr-=0x1000) {
+    pageTable[SPLIT1_UNSHIFT(curr_addr)][SPLIT2_UNSHIFT(curr_addr)]=counter++;
+    qdpmm.markUsed((void*)curr_addr);
+  }
 }
-auto PMM::operator >> (void * &addr) -> PMM & {
-	for(int i=0;i<0x8000;i++) {
-		if(!bitmap[i])
-			continue;
-		for(int j=0;j<32;j++) {
-			if(bitmap[i]&(1<<j)) {
-				//We found a free page!
-				bitmap[i]&=~(1<<j);
-				addr=(void*)(((i<<5)+j)<<12);
-				return *this;
-			}
-		}
-	}
-	addr=nullptr;
-	return *this;
-}
-auto PMM::operator << (const void * addr) -> PMM & {
-	unsigned int address=(unsigned int)addr;
-	address>>=12;
-	int index=address>>5;
-	int bit=1<<(address&0x1F);
-	bitmap[index]|=bit;
-	return *this;
+auto PMM::init(struct multiboot_info* mb_info) -> void {
+  qdpmm.init(mb_info);
+  void *temp;
+  qdpmm >> temp;
+  pageTable=(uint16_t**)temp;
+  markUsed(pageTable,1024);
+  for(int i=0;i<4096;i++)
+    pageTable[i]=nullptr;
 }
 }
