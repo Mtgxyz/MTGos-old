@@ -3,7 +3,7 @@
 #include <Multitasking.hpp>
 #include <serial.hpp>
 #include <blockdev.hpp>
-#include <qdpmm.hpp>
+#include <pmm.hpp>
 auto schedule(struct cpu_state* cpu) -> struct cpu_state* {
     return MTGosHAL::tasks.schedule(cpu);
 }
@@ -28,7 +28,7 @@ Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
 {
     void *tmp1, *tmp2;
-    qdmm >> tmp1 >> tmp2;
+    mm >> tmp1 >> tmp2;
     uint8_t *stack=(uint8_t*)tmp1, *user_stack=(uint8_t*)tmp2;
     struct cpu_state new_state = {
         0, //EAX

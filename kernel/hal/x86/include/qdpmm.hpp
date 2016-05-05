@@ -9,13 +9,10 @@ private:
 protected:
 public:
 	QDPMM();
-	template <typename T>
-	auto markUsed(T * addr) -> void;
+	auto markUsed(const void * addr) -> void;
 	auto init(struct multiboot_info*) -> void;
-	template <typename T>
-	auto operator >> (T * &addr) -> QDPMM &; //alloc
-	template <typename T>
-	auto operator << (const T * addr) -> QDPMM &; //free
+	auto operator >> (void * &addr) -> QDPMM &; //alloc
+	auto operator << (const void * addr) -> QDPMM &; //free
 };
 }
 #endif

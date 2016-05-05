@@ -8,16 +8,13 @@ class PMM {
 private:
 	uint16_t **pageTable;
   QDPMM qdpmm;
-	auto markUsed(void * addr) -> void;
 public:
 	PMM();
-  template <typename T>
-  auto markUsed(T * addr, uint32_t length) -> void;
+  auto markUsed(const void * addr, uint32_t length) -> bool;
   auto init(struct multiboot_info*) -> void;
-  template <typename T>
-  auto operator >> (T * &addr) -> QDPMM &; //alloc
-  template <typename T>
-  auto operator << (const T * addr) -> QDPMM &; //free
+  auto operator >> (void * &addr) -> PMM &; //alloc
+  auto operator << (const void * addr) -> PMM &; //free
+  auto operator()(int pages) -> void*; //alloc_multipage
 };
 }
 #endif

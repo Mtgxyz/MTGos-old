@@ -6,13 +6,10 @@ class PMM {
 private:
 	uint32_t bitmap[0x8000]; //Enough for 4 GB
 public:
-	template <typename T>
-	auto markUsed(T * addr) -> void;
+	auto markUsed(void * addr) -> void;
 	auto init(struct multiboot_info*) -> void;
-	template <typename T>
-	auto operator >> (T * &addr) -> QDPMM &; //alloc
-	template <typename T>
-	auto operator << (const T * addr) -> QDPMM &; //free
+	auto operator >> (void * &addr) -> QDPMM &; //alloc
+	auto operator << (const void * addr) -> QDPMM &; //free
 
 };
 }

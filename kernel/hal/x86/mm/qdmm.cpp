@@ -4,34 +4,6 @@
 #include <multiboot.h>
 extern "C" const int kernel_start;
 extern "C" const int kernel_end; //those are voids actually
-void *operator new(size_t size) {
-	if(size>4096) {
-		asm("int $0x1F");
-	}
-	void *ptr;
-	MTGosHAL::qdmm >> ptr;
-	return ptr;
-}
-void *operator new[](size_t size)  {
-	if(size>4096) {
-		asm("int $0x1F");
-	}
-	void *ptr;
-	MTGosHAL::qdmm >> ptr;
-	return ptr;
-}
-void operator delete(void* p) {
-	MTGosHAL::qdmm << p;
-}
-void operator delete[](void* p) {
-	MTGosHAL::qdmm << p;
-}
-void operator delete(void* p, size_t size) {
-	MTGosHAL::qdmm << p;
-}
-void operator delete[](void* p, size_t size) {
-	MTGosHAL::qdmm << p;
-}
 namespace MTGosHAL {
 QDPMM::QDPMM() {}
 auto QDPMM::init(struct multiboot_info * mb_info) -> void {
@@ -65,16 +37,14 @@ auto QDPMM::init(struct multiboot_info * mb_info) -> void {
 		}
 	}
 }
-template <typename T>
-auto QDPMM::markUsed(T * addr) -> void {
+auto QDPMM::markUsed(const void * addr) -> void {
 	unsigned int address=(unsigned int)addr;
 	address>>=12;
 	int index=address>>5;
 	int bit=1<<(address&0x1F);
 	bitmap[index]&=~bit;
 }
-template <typename T>
-auto QDPMM::operator >> (T * &addr) -> QDPMM & {
+auto QDPMM::operator >> (void * &addr) -> QDPMM & {
 	for(int i=0;i<0x8000;i++) {
 		if(!bitmap[i])
 			continue;
@@ -90,8 +60,7 @@ auto QDPMM::operator >> (T * &addr) -> QDPMM & {
 	addr=nullptr;
 	return *this;
 }
-template <typename T>
-auto QDPMM::operator << (const T * addr) -> QDPMM & {
+auto QDPMM::operator << (const void * addr) -> QDPMM & {
 	unsigned int address=(unsigned int)addr;
 	address>>=12;
 	int index=address>>5;
