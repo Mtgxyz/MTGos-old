@@ -114,16 +114,17 @@ auto PMM::init(struct multiboot_info* mb_info) -> void {
   void *temp;
   qdpmm >> temp;
   pageTable=(uint16_t**)temp;
-  markUsed(pageTable,4096);
-  markUsed((void*)nullptr,4096);
   for(int i=0;i<4096;i++)
     pageTable[i]=nullptr;
+  markUsed(pageTable,4096);
+  markUsed((void*)nullptr,4096);
   struct multiboot_mmap_entry* mmap = (struct multiboot_mmap_entry*) mb_info->mmap_addr;
 	struct multiboot_mmap_entry* mmap_end = (struct multiboot_mmap_entry*) ((unsigned int) mb_info->mmap_addr + mb_info->mmap_length);
   while(mmap < mmap_end) {
     if(mmap->type != 1) {
       markUsed((void*)mmap->addr,mmap->len);
     }
+    mmap++;
   }
   markUsed(&kernel_start,((uint32_t)&kernel_end)-((uint32_t)&kernel_start)); //Protect kernel)
   multiboot_mod_list *mods = (multiboot_mod_list*) mb_info->mods_addr;
