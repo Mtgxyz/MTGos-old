@@ -73,19 +73,8 @@ auto PMM::markUsed(const void * addr, uint32_t length) -> bool {
 }
 
 auto PMM::operator >> (void * &addr) -> PMM & {
-  for(int i=0;i<512;i++) {
-    if(!pageTable[i]) {
-      markUsed((void*)(SPLIT1_SHIFT(i)),4096);
-      addr=(void*)(SPLIT1_SHIFT(i));
-      return *this;
-    }
-    for(int j=0;j<2048;j++) {
-      if(!pageTable[i][j])
-        markUsed((void*)(SPLIT1_SHIFT(i)+SPLIT2_SHIFT(j)),4096);
-        addr=(void*)(SPLIT1_SHIFT(i)+SPLIT2_SHIFT(j));
-        return *this;
-    }
-  }
+  qdpmm >> addr;
+  markUsed(addr,4096);
   return *this;
 }
 auto PMM::operator << (const void *addr) -> PMM & {
