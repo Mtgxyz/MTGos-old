@@ -12,8 +12,8 @@ struct malloc_t {
 class PMM {
 private:
   malloc_t *head;
-  PMM2 pmm2;
 public:
+  PMM2 pmm2;
   PMM();
   auto init(struct multiboot_info*) -> void;
   auto alloc(uint32_t length) -> void *;

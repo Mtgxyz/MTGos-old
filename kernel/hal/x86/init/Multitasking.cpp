@@ -3,7 +3,7 @@
 #include <Multitasking.hpp>
 #include <serial.hpp>
 #include <blockdev.hpp>
-#include <pmm.hpp>
+#include <vmm3.hpp>
 auto schedule(struct cpu_state* cpu) -> struct cpu_state* {
     return MTGosHAL::tasks.schedule(cpu);
 }
@@ -27,7 +27,9 @@ Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 }
 auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
 {
-    uint8_t *stack=(uint8_t*)mm.alloc(4096), *user_stack=(uint8_t*)mm.alloc(4096);
+    void* tmp1, *tmp2;
+    mm.pmm.pmm2 >> tmp1 >> tmp2;
+    uint8_t *stack=(uint8_t*)tmp1, *user_stack=(uint8_t*)tmp2;
     struct cpu_state new_state = {
         0, //EAX
         0, //EBX

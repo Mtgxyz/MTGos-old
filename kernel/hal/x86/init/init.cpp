@@ -8,7 +8,7 @@
 #include <Multitasking.hpp>
 #include <multiboot.h>
 #include <blockdev.hpp>
-#include <pmm.hpp>
+#include <vmm3.hpp>
 extern "C" void intr_stub_0(void);
 void main(void ** programs);
 namespace MTGosHAL {
@@ -20,7 +20,7 @@ namespace MTGosHAL {
 	GDT gdt;
 	Multitasking tasks;
 	BlockDevice disk;
-	PMM mm;
+	VMM3 mm;
 	void main(int eax, struct multiboot_info* ebx) {
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;

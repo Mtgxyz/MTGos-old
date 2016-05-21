@@ -1,5 +1,6 @@
 #include <base.hpp>
 #include <pmm.hpp>
+#include <vmm3.hpp>
 extern "C" const int kernel_start;
 extern "C" const int kernel_end; //those are voids actually
 void *operator new(size_t size) {

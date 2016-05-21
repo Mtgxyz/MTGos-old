@@ -19,6 +19,19 @@ loadIDT:
 	mov 0x4(%esp), %eax
 	lidt (%eax)
 	ret
+.global enterPaging
+//void _stdcall enterPaging(uint32** pd);
+enterPaging:
+  mov 0x4(%esp), %eax
+  mov %eax, %cr3
+  mov %cr4, %eax
+  or $0x10, %eax
+  mov %eax, %cr4
+  mov %cr0, %eax
+  or $0x80000000, %eax
+  mov %eax, %cr0
+  mov (%esp), %eax
+  ret
 
 //Handle interrupts
 .macro intr_stub nr
