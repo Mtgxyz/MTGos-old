@@ -27,9 +27,7 @@ Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 }
 auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
 {
-    void *tmp1, *tmp2;
-    mm >> tmp1 >> tmp2;
-    uint8_t *stack=(uint8_t*)tmp1, *user_stack=(uint8_t*)tmp2;
+    uint8_t *stack=(uint8_t*)mm.alloc(4096), *user_stack=(uint8_t*)mm.alloc(4096);
     struct cpu_state new_state = {
         0, //EAX
         0, //EBX

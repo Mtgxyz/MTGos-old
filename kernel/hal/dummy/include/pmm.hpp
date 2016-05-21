@@ -8,9 +8,9 @@ private:
 public:
 	auto markUsed(void * addr) -> void;
 	auto init(struct multiboot_info*) -> void;
-	auto operator >> (void * &addr) -> QDPMM &; //alloc
-	auto operator << (const void * addr) -> QDPMM &; //free
-
+	auto operator >> (void * &addr) -> PMM &; //alloc
+	auto operator << (const void * addr) -> PMM &; //free
+	auto operator () (uint32_t len) -> void*;
 };
 }
 #endif

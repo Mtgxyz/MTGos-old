@@ -1,12 +1,12 @@
 #include <stdint.h>
 #include <base.hpp>
-#include <qdpmm.hpp>
+#include <pmm3.hpp>
 #include <multiboot.h>
 extern "C" const int kernel_start;
 extern "C" const int kernel_end; //those are voids actually
 namespace MTGosHAL {
-QDPMM::QDPMM() {}
-auto QDPMM::init(struct multiboot_info * mb_info) -> void {
+PMM3::PMM3() {}
+auto PMM3::init(struct multiboot_info * mb_info) -> void {
 	for(int i=0;i<0x8000;i++)
 		bitmap[i]=0;
 	struct multiboot_mmap_entry* mmap = (struct multiboot_mmap_entry*) mb_info->mmap_addr;
@@ -37,14 +37,14 @@ auto QDPMM::init(struct multiboot_info * mb_info) -> void {
 		}
 	}
 }
-auto QDPMM::markUsed(const void * addr) -> void {
+auto PMM3::markUsed(const void * addr) -> void {
 	unsigned int address=(unsigned int)addr;
 	address>>=12;
 	int index=address>>5;
 	int bit=1<<(address&0x1F);
 	bitmap[index]&=~bit;
 }
-auto QDPMM::operator >> (void * &addr) -> QDPMM & {
+auto PMM3::operator >> (void * &addr) -> PMM3 & {
 	for(int i=0;i<0x8000;i++) {
 		if(!bitmap[i])
 			continue;
@@ -60,7 +60,7 @@ auto QDPMM::operator >> (void * &addr) -> QDPMM & {
 	addr=nullptr;
 	return *this;
 }
-auto QDPMM::operator << (const void * addr) -> QDPMM & {
+auto PMM3::operator << (const void * addr) -> PMM3 & {
 	unsigned int address=(unsigned int)addr;
 	address>>=12;
 	int index=address>>5;
