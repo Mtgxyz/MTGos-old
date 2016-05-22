@@ -3,7 +3,9 @@
 #include <idt.hpp>
 #include <serial.hpp>
 #include <textDISP.hpp>
+#include <vmm3.hpp>
 auto syscall(uint32_t syscall_num, void* handle, void* args) -> void*;
+extern void** progs;
 namespace MTGosHAL {
 	IDT::IDT() {
 		//Init PIC
@@ -32,10 +34,27 @@ namespace MTGosHAL {
 		loadIDT((void*)&idtptr);
 	}
 	auto IDT::handle(struct cpu_state* cpu) -> struct cpu_state* {
-	    struct cpu_state* new_cpu=cpu;
+    struct cpu_state* new_cpu=cpu;
 		debug << "Interrupt 0x" << Base::HEXADECIMAL << (int) cpu->intr << " was raised.\n";
 		if(cpu->intr<=0x1F) {
 			err << "Exception 0x" << Base::HEXADECIMAL << (int) cpu->intr << "! Kernel halted!\n";
+      err << "EAX = 0x" << (int)cpu->eax << " - EBX = 0x" << (int)cpu->ebx << "\n";
+      err << "ECX = 0x" << (int)cpu->ecx << " - EDX = 0x" << (int)cpu->edx << "\n";
+      err << "ESI = 0x" << (int)cpu->esi << " - EDI = 0x" << (int)cpu->edi << "\n";
+      err << "SS:ESP = 0x" << (int)cpu->ss << ":0x" << (int)cpu->esp << " - SS:EBP = 0x" << (int)cpu->ss << ":0x" << (int)cpu->ebp << "\n";
+      err << "CS:EIP = 0x" << (int)cpu->cs << ":0x" << (int)cpu->eip << " - INTR:ERR = 0x" << (int)cpu->intr << ":0x" << (int)cpu->error << "\n";
+      err << "------ END OF REGISTER DUMP ------   ------ START OF PROGRAM LOADPOINTS ------\n";
+      for(int i=0;i<1024;i++) {
+        if(!progs[i])
+          break;
+        err << "0x" << (int)((uint32_t)progs[i]) << "; ";
+      }
+      err << "\n";
+      uint16_t counter = 1193180 / 220; //Make an annoying beep
+      outb(0x43, 0xB6);
+      outb(0x42, (uint8_t)counter);
+      outb(0x42, (uint8_t)(counter>>8));
+      outb(0x61, inb(0x61) | 3);
 			while(1) {
 				asm volatile("cli; hlt");
 			}
@@ -54,7 +73,7 @@ namespace MTGosHAL {
 				new_cpu=ivt[cpu->intr][i](new_cpu);
 		}
     if(cpu->intr>=48)
-      cpu->eax=(uint32_t)(::syscall(cpu->eax, (void*)(cpu->ebx), (void*)(cpu->esp)));
+      new_cpu->eax=(uint32_t)(::syscall(cpu->eax, (void*)(cpu->ebx), (void*)(cpu->esp)));
 		return new_cpu;
 	}
 	auto IDT::request(uint8_t intr, struct cpu_state* (*handler)(struct cpu_state*)) -> bool {

@@ -11,6 +11,7 @@
 #include <vmm3.hpp>
 extern "C" void intr_stub_0(void);
 void main(void ** programs);
+void** progs;
 namespace MTGosHAL {
 	Serial debug;
 	Screen out;
@@ -45,14 +46,14 @@ namespace MTGosHAL {
 		idt.apply();
 		mm.init(ebx);
     multiboot_mod_list *mods = (multiboot_mod_list*) ebx->mods_addr;
-		void** progs=(void**)mm.alloc(4096);
-		uint32_t i;
-		for(i=0;i<(ebx->mods_count<1023?ebx->mods_count:1023);i++) { //Basically until MIN(ebx->mods_count, 1023), as we only support loading up to 1023 programs directly.
+		progs=(void**)mm.alloc(4096);
+    for(int i=0;i<1024;i++) {
+      progs[i]=nullptr;
+    }
+		for(uint32_t i=0;i<(ebx->mods_count<1023?ebx->mods_count:1023);i++) { //Basically until MIN(ebx->mods_count, 1023), as we only support loading up to 1023 programs directly.
 			progs[i]=(void*)(mods[i].mod_start);
 			debug << "Found module!\n";
 		}
-		i++;
-		progs[i]=nullptr;
 		::main(progs);
 		sti();
 		for(;;);

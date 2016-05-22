@@ -309,6 +309,7 @@ intr_stub 255
 //This should cover everything.
 .extern handleINT
 intr_common_handler:
+  cli
 	push %ebp
 	push %edi
 	push %esi
