@@ -47,7 +47,8 @@ auto PMM::alloc(uint32_t length) -> void * {
   malloc_t* last=nullptr;
   do {
     uint32_t loc=(uint32_t)curr+sizeof(malloc_t)+curr->len;
-    if((loc+length+sizeof(malloc_t))<((loc&(~0xFFF))+4096)) {
+    if((loc+length+sizeof(malloc_t))<((loc&(~0xFFF))+4096) &&
+       ((!curr->next) || (loc+length+sizeof(malloc_t))<((uint32_t)(curr->next)))) {
       malloc_t *allocd=(malloc_t *)loc;
       allocd->len=length;
       allocd->last=curr;

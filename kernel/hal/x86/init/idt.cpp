@@ -3,6 +3,7 @@
 #include <idt.hpp>
 #include <serial.hpp>
 #include <textDISP.hpp>
+auto syscall(uint32_t syscall_num, void* handle, void* args) -> void*;
 namespace MTGosHAL {
 	IDT::IDT() {
 		//Init PIC
@@ -52,6 +53,8 @@ namespace MTGosHAL {
 			if(ivt[cpu->intr][i])
 				new_cpu=ivt[cpu->intr][i](new_cpu);
 		}
+    if(cpu->intr>=48)
+      cpu->eax=(uint32_t)(::syscall(cpu->eax, (void*)(cpu->ebx), (void*)(cpu->esp)));
 		return new_cpu;
 	}
 	auto IDT::request(uint8_t intr, struct cpu_state* (*handler)(struct cpu_state*)) -> bool {

@@ -1,17 +1,19 @@
 include ../kernel.settings
-SRCS = $(shell find -name '*.c')
+SRCS = $(shell find -name '*.cpp')
 OBJS = $(addsuffix .o,$(basename $(SRCS)))
-CC = $(PREFIX)gcc
+AS = $(PREFIX)gcc
+CPP = $(PREFIX)g++
 LD = $(PREFIX)ld
 ASFLAGS = -m32
-CFLAGS = -m32 -w -g -fno-stack-protector -nostdinc -I include -fpie
+CPPFLAGS = -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie
 LDFLAGS = -melf_i386 -Ttest.ld
-test.elf: $(OBJS)
+test.elf: $(OBJS) $(arch)/syscall.o
 		$(LD) $(LDFLAGS) -o $@ $^
 
-%.o: %.c
-		$(CC) $(CFLAGS) -c -o $@ $^
-
+%.o: %.cpp
+		$(CPP) $(CPPFLAGS) -c -o $@ $^
+$(arch)/syscall.o: $(arch)/syscall.S
+	$(AS) $(ASFLAGS) -c -o $@ $^
 clean:
-		rm $(OBJS)
+		rm $(OBJS) $(arch)/syscall.o
 .PHONY: clean

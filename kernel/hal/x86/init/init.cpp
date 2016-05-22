@@ -40,31 +40,10 @@ namespace MTGosHAL {
 		for(int i=0;i<256;i++) {
 			idt.setEntry(i, (void *)((uint32_t)&intr_stub_0+i*16), SEG_KERNEL, IDT_INTERRUPT_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		}
-		idt.setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
+		idt.setEntry(48, (void *)((uint32_t)&intr_stub_0+768), SEG_KERNEL, IDT_TRAP_GATE | IDT_SEG_32_BIT | IDT_RING_3 | IDT_USED);
 		idt.setEntry(8, (void *)((uint32_t)&intr_stub_0+128), SEG_DBL_FAULT, IDT_TASK_GATE | IDT_SEG_32_BIT | IDT_RING_0 | IDT_USED);
 		idt.apply();
 		mm.init(ebx);
-    debug << "Now tesing the PMM... Allocating 1 byte\n";
-    char* tmp=(char*)mm.alloc(1);
-    debug << "Allocating another byte\n";
-    char* tmp2=(char*)mm.alloc(1);
-    tmp2[0]='A';
-    debug << "Freeing the first byte...\n";
-    mm.free((void*)tmp);
-    debug << "Allocating 14 bytes... \n";
-    tmp=(char*)mm.alloc(14);
-    debug << "Changing the last byte... \n";
-    tmp[13]='B';
-    debug << "Changing if the second byte has changed...\n";
-    if(tmp2[0]=='B') {
-      err << "The allocate function is broken.\n";
-      debug << "The allocate function is broken.\n";
-    } else {
-      debug << "The allocate function works!\n";
-    }
-    debug << "Freeing up both pointers.";
-    mm.free((void*)tmp);
-    mm.free((void*)tmp2);
     multiboot_mod_list *mods = (multiboot_mod_list*) ebx->mods_addr;
 		void** progs=(void**)mm.alloc(4096);
 		uint32_t i;
