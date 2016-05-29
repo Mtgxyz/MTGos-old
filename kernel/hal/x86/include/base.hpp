@@ -13,8 +13,8 @@ namespace MTGosHAL {
 	class BlockDevice;
 	class Task;
 	class VMM3;
-	enum class BG_color: uint16_t;
-	enum class FG_color: uint16_t;
+	enum class BG_color: uint32_t;
+	enum class FG_color: uint32_t;
 	extern Serial debug;
 	extern Screen out;
 	extern Screen err;

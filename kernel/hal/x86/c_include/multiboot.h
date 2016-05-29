@@ -268,7 +268,42 @@ struct multiboot_apm_info
   multiboot_uint16_t cseg_16_len;
   multiboot_uint16_t dseg_len;
 };
-
+struct MODE_INFO
+{
+   unsigned short ModeAttributes       ;
+   unsigned char  WinAAttributes       ;
+   unsigned char  WinBAttributes       ;
+   unsigned short WinGranularity       ;
+   unsigned short WinSize              ;
+   unsigned short WinASegment          ;
+   unsigned short WinBSegment          ;
+   unsigned int  WinFuncPtr           ;
+   unsigned short BytesPerScanLine     ;
+   unsigned short XResolution          ;
+   unsigned short YResolution          ;
+   unsigned char  XCharSize            ;
+   unsigned char  YCharSize            ;
+   unsigned char  NumberOfPlanes       ;
+   unsigned char  BitsPerPixel         ;
+   unsigned char  NumberOfBanks        ;
+   unsigned char  MemoryModel          ;
+   unsigned char  BankSize             ;
+   unsigned char  NumberOfImagePages   ;
+   unsigned char  Reserved_page        ;
+   unsigned char  RedMaskSize          ;
+   unsigned char  RedMaskPos           ;
+   unsigned char  GreenMaskSize        ;
+   unsigned char  GreenMaskPos         ;
+   unsigned char  BlueMaskSize         ;
+   unsigned char  BlueMaskPos          ;
+   unsigned char  ReservedMaskSize     ;
+   unsigned char  ReservedMaskPos      ;
+   unsigned char  DirectColorModeInfo  ;
+   unsigned int  PhysBasePtr          ;
+   unsigned int  OffScreenMemOffset   ;
+   unsigned short OffScreenMemSize     ;
+   unsigned char  Reserved[206]        ;
+}__attribute__ ((packed));
 #endif /* ! ASM_FILE */
 
 #endif /* ! MULTIBOOT_HEADER */

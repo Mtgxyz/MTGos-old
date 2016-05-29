@@ -36,7 +36,7 @@ namespace MTGosHAL {
         numDevices++;
       }
     } else {
-      err << "ATA device could not be found!\n";
+      //err << "ATA device could not be found!\n";
     }
     outb(baseport+ALTCMD,0x40);
     inb(baseport+CMD);

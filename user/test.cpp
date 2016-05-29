@@ -12,6 +12,7 @@ void main()
   ScreenOut out=ScreenOut(false);
   int i;
   out.setColor(BGColor::BLUE, FGColor::YELLOW);
-  for(;;)
+  for(;;) {
     out << arr;
+  }
 }

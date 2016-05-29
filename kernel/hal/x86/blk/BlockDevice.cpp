@@ -20,7 +20,7 @@
 namespace MTGosHAL {
   BlockDevice::BlockDevice(): numDevices(0), ata0(0x1F0,0), ata1(0x170,1), ata2(0x1E8,2), ata3(0x168,3) {
     if(getDriveCnt()==0) {
-      err<<"Not a single device was found!\n";
+      //err<<"Not a single device was found!\n";
     }
   }
   auto BlockDevice::getDriveCnt() -> int32_t {return ata0.getDriveCnt()+ata1.getDriveCnt()+ata2.getDriveCnt()+ata3.getDriveCnt();}

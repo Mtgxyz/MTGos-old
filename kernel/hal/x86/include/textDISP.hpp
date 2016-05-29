@@ -1,56 +1,58 @@
 #ifndef _TEXTDISP_H
 #define _TEXTDISP_H
+#include <base.hpp>
 #include <stdint.h>
 #include <output.hpp>
-#define SCREEN_WIDTH 80
-#define SCREEN_HEIGHT 24
+#include <multiboot.h>
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 96
 namespace MTGosHAL {
-	enum class BG_color : uint16_t {
-		BLACK=0x0000,
-		BLUE=0x1000,
-		GREEN=0x2000,
-		CYAN=0x3000,
-		RED=0x4000,
-		MAGENTA=0x5000,
-		BROWN=0x6000,
-		LIGHT_GREY=0x7000,
-		GREY=0x8000,
-		LIGHT_BLUE=0x9000,
-		LIGHT_GREEN=0xA000,
-		LIGHT_CYAN=0xB000,
-		LIGHT_RED=0xC000,
-		LIGHT_MAGENTA=0xD000,
-		YELLOW=0xE000,
-		WHITE=0xF000
+	enum class BG_color : uint32_t {
+		BLACK=0x000000,
+		BLUE=0x0000AA,
+		GREEN=0x00AA00,
+		CYAN=0x00AAAA,
+		RED=0xAA0000,
+		MAGENTA=0xAA00AA,
+		BROWN=0xAA5500,
+		LIGHT_GREY=0xAAAAAA,
+		GREY=0x555555,
+		LIGHT_BLUE=0x5555FF,
+		LIGHT_GREEN=0x55FF55,
+		LIGHT_CYAN=0x55FFFF,
+		LIGHT_RED=0xFF5555,
+		LIGHT_MAGENTA=0xFF55FF,
+		YELLOW=0xFFFF55,
+		WHITE=0xFFFFFF
 	};
-	enum class FG_color : uint16_t {
-		BLACK=0x000,
-		BLUE=0x100,
-		GREEN=0x200,
-		CYAN=0x300,
-		RED=0x400,
-		MAGENTA=0x500,
-		BROWN=0x600,
-		LIGHT_GREY=0x700,
-		GREY=0x800,
-		LIGHT_BLUE=0x900,
-		LIGHT_GREEN=0xA00,
-		LIGHT_CYAN=0xB00,
-		LIGHT_RED=0xC00,
-		LIGHT_MAGENTA=0xD00,
-		YELLOW=0xE00,
-		WHITE=0xF00
+	enum class FG_color : uint32_t {
+		BLACK=0x000000,
+		BLUE=0x0000AA,
+		GREEN=0x00AA00,
+		CYAN=0x00AAAA,
+		RED=0xAA0000,
+		MAGENTA=0xAA00AA,
+		BROWN=0xAA5500,
+		LIGHT_GREY=0xAAAAAA,
+		GREY=0x555555,
+		LIGHT_BLUE=0x5555FF,
+		LIGHT_GREEN=0x55FF55,
+		LIGHT_CYAN=0x55FFFF,
+		LIGHT_RED=0xFF5555,
+		LIGHT_MAGENTA=0xFF55FF,
+		YELLOW=0xFFFF55,
+		WHITE=0xFFFFFF
 	};
 	class Screen: public Output {
 		private:
 			FG_color fg;
 			BG_color bg;
-			uint16_t* vmem=(uint16_t*)0xB8000;
+			uint32_t* lfb;
 			auto putChar(char c) -> void;
 		public:
 			Screen(): fg(FG_color::WHITE), bg(BG_color::BLACK) {
-				clrscr();
 			}
+			auto init(struct multiboot_info*) -> void;
 			template <typename T>
 			auto operator<< (T output) -> Screen & {
 				Output::operator<<<T>(output);

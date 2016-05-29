@@ -23,6 +23,8 @@ namespace MTGosHAL {
 	BlockDevice disk;
 	VMM3 mm;
 	void main(int eax, struct multiboot_info* ebx) {
+		out.init(ebx);
+		err.init(ebx);
 		out << BG_color::BLACK << FG_color::WHITE << "Loading MTGos...\n";
 		err << BG_color::BLACK << FG_color::RED;
 		if(eax!=0x2BADB002)

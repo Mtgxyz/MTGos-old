@@ -5,7 +5,7 @@ namespace MTGosHAL {
 		return inb(port+SERIAL_LSR)&0x20;
 	}
 	auto Serial::putChar(char chr) -> void {
-		if(!works)
+//		if(!works)
 			return;
 		int tries=65535;
 		while(!isTransmitEmpty()) {
@@ -55,7 +55,7 @@ namespace MTGosHAL {
 		//Set baud divisor
 		outb(port, divisor.b[0]);
 		outb(port+1, divisor.b[1]);
-		//Set bit count, parity and reset DLAB 
+		//Set bit count, parity and reset DLAB
 		outb(port+SERIAL_LCR, 3);
 		//Finish init
 		outb(port+SERIAL_FCR, 0xC7);
