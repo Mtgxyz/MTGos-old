@@ -86,6 +86,6 @@ namespace MTGosHAL {
 		return false;
 	}
 }
-extern "C" struct cpu_state* handleINT(struct cpu_state* cpu) {
-	return MTGosHAL::idt.handle(cpu);
+extern "C" void* handleINT(void* cpu) {
+	return (void*)MTGosHAL::idt.handle((MTGosHAL::cpu_state*)cpu);
 }

@@ -6,7 +6,7 @@ OBJS += $(addsuffix .o,$(basename $(KERNSRCS)))
 LD = $(PREFIX)g++
 LDFLAGS =  -nostdlib -nodefaultlibs -nostdlib -fno-builtin
 ifeq ($(arch),x86)
-	LDFLAGS += -m32 -T kernel.ld
+	LDFLAGS += -m32 -T kernel-$(arch).ld
 endif
 all: hal kernel
 	$(LD) $(LDFLAGS) -o mtgos $(OBJS)

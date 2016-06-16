@@ -13,8 +13,10 @@
 #define SEG_DBL_FAULT      0x28 /*Only use for double fault handler!!*/
 extern "C" {
 	void loadIDT(void * ptr);
+}
+
+namespace MTGosHAL {
 	struct cpu_state {
-		// Von Hand gesicherte Register
 		uint32_t   eax;
 		uint32_t   ebx;
 		uint32_t   ecx;
@@ -22,17 +24,16 @@ extern "C" {
 		uint32_t   esi;
 		uint32_t   edi;
 		uint32_t   ebp;
+
 		uint32_t   intr;
 		uint32_t   error;
-		// Von der CPU gesichert
+
 		uint32_t   eip;
 		uint32_t   cs;
 		uint32_t   eflags;
 		uint32_t   esp;
 		uint32_t   ss;
 	};
-}
-namespace MTGosHAL {
 	class IDT {
 		private:
 			uint64_t idt[256];
@@ -50,5 +51,4 @@ namespace MTGosHAL {
 			auto request(uint8_t intr, struct cpu_state* (*handler)(struct cpu_state*)) -> bool;
 	};
 }
-extern "C" struct cpu_state* handleINT(struct cpu_state* cpu);
 #endif

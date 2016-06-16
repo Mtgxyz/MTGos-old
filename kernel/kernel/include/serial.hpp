@@ -3,7 +3,6 @@
 #include <output.hpp>
 #include <input.hpp>
 #include <textDISP.hpp>
-#include <io.h>
 #define SERIAL_IER 1
 #define SERIAL_IIR 2
 #define SERIAL_FCR 2
@@ -14,9 +13,6 @@
 namespace MTGosHAL {
 	class Serial: public Output, public Input {
 		private:
-			uint16_t port;
-			uint64_t waittimes;
-			uint64_t transmits;
 			bool works;
 			auto isTransmitEmpty() -> int;
 			auto putChar(char chr) -> void;

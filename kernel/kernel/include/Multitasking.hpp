@@ -1,5 +1,6 @@
 #ifndef MULTITASKING_H
 #define MULTITASKING_H
+#include <cpu_state.h>
 namespace MTGosHAL {
 
   class Multitasking
@@ -8,7 +9,6 @@ namespace MTGosHAL {
           Multitasking();
           auto schedule(struct cpu_state* cpu) -> struct cpu_state*;
           auto initTask(void(*entry)()) -> struct cpu_state*;
-          uint32_t tss[32];
       protected:
       private:
           Task* first_task;

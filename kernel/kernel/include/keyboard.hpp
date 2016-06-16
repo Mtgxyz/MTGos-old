@@ -2,7 +2,6 @@
 #define _KEYBOARD_HPP
 #include <stdint.h>
 #include <input.hpp>
-#include <io.h>
 namespace MTGosHAL {
 
 	class Keyboard: public Input {
@@ -12,8 +11,6 @@ namespace MTGosHAL {
 			char buf[16];
 			int len;
 			auto getChar() -> char;
-			auto sendCommand(uint8_t command) -> void;
-			bool numlock, capslock, scrolllock, response;
 		public:
 			auto handleIRQ1(struct cpu_state* cpu) -> struct cpu_state*;
 			Keyboard();

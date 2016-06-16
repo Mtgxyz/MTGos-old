@@ -3,12 +3,12 @@
 #include <Multitasking.hpp>
 #include <serial.hpp>
 #include <blockdev.hpp>
+#include <idt.hpp>
 #include <vmm3.hpp>
+namespace MTGosHAL {
 auto schedule(struct cpu_state* cpu) -> struct cpu_state* {
     return MTGosHAL::tasks.schedule(cpu);
 }
-namespace MTGosHAL {
-
 Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 {
   for(int i=0;i<32;i++) {
@@ -19,7 +19,7 @@ Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
   tss[2]=0x10;
     //task_states[0] = initTask(stack_a, user_stack_a, task_a);
     //task_states[1] = initTask(stack_b, user_stack_b, task_b);
-    if(!idt.request(0x20,::schedule)) {
+    if(!idt.request(0x20,MTGosHAL::schedule)) {
         err << "Could not start multitasking\nFatal error; Kernel halted!\n";
         while(true)
           asm volatile("cli; hlt");

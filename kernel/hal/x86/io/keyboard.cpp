@@ -3,10 +3,11 @@
 #include <serial.hpp>
 #include <keyboard.hpp>
 #include <keymap_DE.hpp>
-auto handleIRQ(struct cpu_state* cpu) -> struct cpu_state* {
-	return MTGosHAL::in.handleIRQ1(cpu);
-}
+
 namespace MTGosHAL {
+	auto handleIRQ(struct cpu_state* cpu) -> struct cpu_state* {
+		return in.handleIRQ1(cpu);
+	}
 	auto Keyboard::getChar() -> char {
 		char chr=buf[0];
 		for(int i=0;i<15;i++) {

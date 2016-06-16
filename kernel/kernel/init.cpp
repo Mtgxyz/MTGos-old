@@ -3,7 +3,7 @@
 #include <serial.hpp>
 #include <textDISP.hpp>
 #include <keyboard.hpp>
-#include <Multitasking.h>
+#include <Multitasking.hpp>
 #include <blockdev.hpp>
 #include <elf.hpp>
 using namespace MTGosHAL;
