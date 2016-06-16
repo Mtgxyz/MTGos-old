@@ -12,7 +12,7 @@ namespace MTGosHAL {
 	class Multitasking;
 	class BlockDevice;
 	class Task;
-	class VMM3;
+	class PMM;
 	enum class BG_color: uint32_t;
 	enum class FG_color: uint32_t;
 	extern Serial debug;
@@ -23,6 +23,6 @@ namespace MTGosHAL {
 	extern IDT idt;
 	extern Multitasking tasks;
 	extern BlockDevice disk;
-	extern VMM3 mm;
+	extern PMM mm;
 }
 #endif

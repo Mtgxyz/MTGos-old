@@ -28,7 +28,7 @@ Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
 {
     void* tmp1, *tmp2;
-    mm.pmm.pmm2 >> tmp1 >> tmp2;
+    mm >> tmp1 >> tmp2;
     uint8_t *stack=(uint8_t*)tmp1, *user_stack=(uint8_t*)tmp2;
     struct cpu_state new_state = {
         0, //EAX
@@ -67,25 +67,8 @@ auto Multitasking::schedule(struct cpu_state* cpu) -> struct cpu_state*
     next=first_task;
   }
   curr_task=next;
-  return next->unpause();
-}
-Task::Task(struct cpu_state* cpu): cpu_state(cpu), next(nullptr) {};
-//This is run every time this task is chosen by the scheduler
-auto Task::unpause() -> struct cpu_state* {
+  struct cpu_state* cpu_state=next->unpause();
   MTGosHAL::tasks.tss[1] = (uint32_t) (cpu_state + 1);
   return cpu_state;
-}
-//This is run every time the timer ticks and a task is running
-auto Task::pause(struct cpu_state* cpu) -> Task * {
-  cpu_state=cpu;
-  return next;
-}
-auto Task::addTask(Task* task) -> void {
-  if(next)
-    return next->addTask(task);
-  next=task;
-}
-auto Task::hasNext() -> bool {
-  return next!=nullptr;
 }
 } // namespace MTGosHAL

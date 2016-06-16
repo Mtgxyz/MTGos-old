@@ -21,7 +21,7 @@ namespace MTGosHAL {
 	GDT gdt;
 	Multitasking tasks;
 	BlockDevice disk;
-	VMM3 mm;
+	PMM mm;
 	void main(int eax, struct multiboot_info* ebx) {
 		out.init(ebx);
 		err.init(ebx);
