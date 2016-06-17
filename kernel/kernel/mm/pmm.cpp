@@ -21,7 +21,7 @@ void operator delete[](void* p, size_t size) {
 }
 namespace MTGosHAL {
 
-  auto PMM::alloc(uint32_t length) -> void * {
+  auto PMM::alloc(size_t length) -> void * {
     if(!head) {
       //Alloc space for head
       if(length+sizeof(malloc_t)<=4096) { //Small optimization. The routine for allocating more than one continuous page is terribly slow.
@@ -41,9 +41,9 @@ namespace MTGosHAL {
     malloc_t* curr=head;
     malloc_t* last=nullptr;
     do {
-      uint32_t loc=(uint32_t)curr+sizeof(malloc_t)+curr->len;
+      uintptr_t loc=(uintptr_t)curr+sizeof(malloc_t)+curr->len;
       if((loc+length+sizeof(malloc_t))<((loc&(~0xFFF))+4096) &&
-         ((!curr->next) || (loc+length+sizeof(malloc_t))<((uint32_t)(curr->next)))) {
+         ((!curr->next) || (loc+length+sizeof(malloc_t))<((uintptr_t)(curr->next)))) {
         malloc_t *allocd=(malloc_t *)loc;
         allocd->len=length;
         allocd->last=curr;
@@ -83,9 +83,9 @@ namespace MTGosHAL {
     chk--;
     do {
       if(curr==chk) {
-        uint32_t start=((uint32_t)chk)&(~0xFFF);
-        uint32_t end=start+0x1000;
-        if((((uint32_t)(curr->last)<start)||((uint32_t)(curr->last)>=end))&&(((uint32_t)(curr->next)>=end)||((uint32_t)(curr->next)<start))) {
+        uintptr_t start=((uintptr_t)chk)&(~0xFFF);
+        uintptr_t end=start+0x1000;
+        if((((uintptr_t)(curr->last)<start)||((uintptr_t)(curr->last)>=end))&&(((uintptr_t)(curr->next)>=end)||((uintptr_t)(curr->next)<start))) {
           *this << (void*)start;
         }
         if(curr->last)

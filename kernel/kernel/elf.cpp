@@ -11,7 +11,7 @@ auto load(Elf32_Ehdr* file) -> void* {
     return nullptr;
     debug << "File is not a valid ELF file!\n";
   }
-  Elf32_Phdr *phdr = (Elf32_Phdr*)((uint32_t)(file->e_phoff)+(uint32_t)file);
+  Elf32_Phdr *phdr = (Elf32_Phdr*)((uintptr_t)(file->e_phoff)+(uintptr_t)file);
   debug << "entry=";
   debug << Base::HEXADECIMAL;
   debug << (int)file->e_entry;
@@ -27,8 +27,8 @@ auto load(Elf32_Ehdr* file) -> void* {
     if((start <= file->e_entry) && (file->e_entry < end)) {
       debug << "start=";
       debug << Base::HEXADECIMAL;
-      debug << (int)(file->e_entry-start+phdr[i].p_offset+(uint32_t)file);
-      return (void*) (file->e_entry-start+phdr[i].p_offset+(uint32_t)file); //Calculate _start address
+      debug << (int)(file->e_entry-start+phdr[i].p_offset+(uintptr_t)file);
+      return (void*) (file->e_entry-start+phdr[i].p_offset+(uintptr_t)file); //Calculate _start address
     }
   }
   return nullptr;

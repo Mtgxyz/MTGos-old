@@ -1,6 +1,10 @@
 #ifndef _BASE_HPP
 #define _BASE_HPP
 #include <stdint.h>
+void * operator new (size_t, void * p);
+void * operator new[] (size_t, void * p);
+void operator delete (void *, void *);
+void operator delete[] (void *, void *);
 namespace MTGosHAL {
 	class Output;
 	class Input;

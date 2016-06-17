@@ -12,5 +12,6 @@ user:
 clean:
 	make -C kernel clean
 	rm -rf mtgos
+	find . -name '*.o' -delete
 
 .PHONY: all mtgos user clean

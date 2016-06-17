@@ -4,10 +4,8 @@ KERNSRCS = $(shell find kernel -name '*.cpp' -o -name '*.c')
 OBJS = $(addsuffix .o,$(basename $(SRCS)))
 OBJS += $(addsuffix .o,$(basename $(KERNSRCS)))
 LD = $(PREFIX)g++
-LDFLAGS =  -nostdlib -nodefaultlibs -nostdlib -fno-builtin
-ifeq ($(arch),x86)
-	LDFLAGS += -m32 -T kernel-$(arch).ld
-endif
+LDFLAGS =  -nostdlib -nodefaultlibs -nostdlib -fno-builtin $(ARCHFLAGS) -T kernel-$(arch).ld
+
 all: hal kernel
 	$(LD) $(LDFLAGS) -o mtgos $(OBJS)
 hal:

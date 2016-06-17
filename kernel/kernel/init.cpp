@@ -6,6 +6,10 @@
 #include <Multitasking.hpp>
 #include <blockdev.hpp>
 #include <elf.hpp>
+void * operator new (size_t, void * p)  { return p ; }
+void * operator new[] (size_t, void * p)  { return p ; }
+void operator delete (void *, void *)  { }
+void operator delete[] (void *, void *)  { }
 using namespace MTGosHAL;
 void pid_null() {
   for(;;);

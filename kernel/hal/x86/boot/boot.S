@@ -13,6 +13,7 @@
 .extern init
 .global _start
 _start:
+	finit
 	mov $kernel_stack, %esp
 	push %ebx
 	push %eax

@@ -1,18 +1,20 @@
-arch = x86_64
+arch = x86
 #MODE = debug
 MODE = release # enables optimization
 
 export PATH := $(HOME)/opt/bin:$(PATH)
+ARCHFLAGS =
 ifeq ($(arch),x86)
   PREFIX = i686-elf-
 else
   ifeq ($(arch),x86_64)
     PREFIX = x86_64-elf-
+    ARCHFLAGS =
   endif
 endif
 
 ifeq ($(MODE),debug)
-  	CFLAGS += -g3 -DDEBUG
+  CFLAGS += -g3 -DDEBUG
 	CPPFLAGS += -g3 -DDEBUG
 else
 	CFLAGS += -O2

@@ -4,7 +4,7 @@
 #include <serial.hpp>
 #include <blockdev.hpp>
 #include <idt.hpp>
-#include <vmm3.hpp>
+#include <pmm.hpp>
 namespace MTGosHAL {
 auto schedule(struct cpu_state* cpu) -> struct cpu_state* {
     return MTGosHAL::tasks.schedule(cpu);
@@ -39,22 +39,30 @@ auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
         0.0, //ST5
         0.0, //ST6
         0.0, //ST7
-        0, //EAX
-        0, //EBX
-        0, //ECX
-        0, //EDX
-        0, //ESI
-        0, //EDI
-        0, //EBP
+        0, //RAX
+        0, //RBX
+        0, //RCX
+        0, //RDX
+        0, //RSI
+        0, //RDI
+        0, //RBP
+        0, //R8
+        0, //R9
+        0, //r10
+        0, //r11
+        0, //r12
+        0, //r13
+        0, //r14
+        0, //r15
         0, //INTR
         0, //ERROR
-        (uint32_t) entry, //EIP
+        (uint64_t) entry, //RIP
         0x18 | 0x03, //CS
-        0x202, // EFLAGS
-        (uint32_t) user_stack+4096, //ESP
+        0x202, // RFLAGS
+        (uint64_t) user_stack+0x200000, //RSP
         0x20 | 0x03 //SS
     };
-    struct cpu_state* state = (struct cpu_state*)(stack+4096-sizeof(new_state));
+    struct cpu_state* state = (struct cpu_state*)(stack+0x200000-sizeof(new_state));
     *state = new_state;
     //Create new task class
     Task* task = new Task(state);
@@ -76,7 +84,7 @@ auto Multitasking::schedule(struct cpu_state* cpu) -> struct cpu_state*
   }
   curr_task=next;
   struct cpu_state* cpu_state=next->unpause();
-  MTGosHAL::tasks.tss[1] = (uint32_t) (cpu_state + 1);
+  MTGosHAL::tasks.tss[1] = (uint32_t) (uint64_t)(cpu_state + 1);
   return cpu_state;
 }
 } // namespace MTGosHAL

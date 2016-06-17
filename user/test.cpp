@@ -13,6 +13,14 @@ void main()
   int i;
   out.setColor(BGColor::BLUE, FGColor::YELLOW);
   for(;;) {
-    out << arr;
+    long double a;
+    long double b=a;
+    out <<  a;
+    a+=0.5;
+    if(a!=b+0.5)
+      out << " ";
+    else
+      out << "=";
+    out <<  a;
   }
 }

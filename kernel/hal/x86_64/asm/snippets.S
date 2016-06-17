@@ -1,8 +1,8 @@
 .global loadGDT
 //void _stdcall loadGDT(struct gdtp* ptr);
 loadGDT:
-	mov 0x4(%esp), %eax // Load argument
-	lgdt (%eax)
+	mov 0x8(%rsp), %rax // Load argument
+	lgdt (%rax)
 	//GDT is loaded now
 	mov $0x10, %ax
 	mov %ax, %ds
@@ -10,43 +10,49 @@ loadGDT:
 	mov %ax, %fs
 	mov %ax, %gs
 	mov %ax, %ss
-	ljmp $0x8, $.1
+	mov $0x10, %rax
+.code32
+	ljmp $8, $.1 //Hacky hack
+.code64
 .1:
 	ret
 .global loadIDT
 //void _stdcall loadIDT(struct idtp* ptr);
 loadIDT:
-	mov 0x4(%esp), %eax
-	lidt (%eax)
+	mov 0x8(%rsp), %rax
+	lidt (%rax)
 	ret
 .global enterPaging
 //void _stdcall enterPaging(uint32** pd);
 enterPaging:
-  mov 0x4(%esp), %eax
-  mov %eax, %cr3
-  mov %cr4, %eax
-  or $0x10, %eax
-  mov %eax, %cr4
-  mov %cr0, %eax
-  or $0x80000000, %eax
-  mov %eax, %cr0
-  mov (%esp), %eax
+  mov 0x8(%rsp), %rax
+  mov %rax, %cr3
+  mov %cr4, %rax
+  or $0x10, %rax
+  mov %rax, %cr4
+  mov %cr0, %rax
+	push %rbx
+	mov $0x80000000,%rbx
+  or %rbx, %rax
+	pop %rbx
+  mov %rax, %cr0
+  mov (%rsp), %rax
   ret
 
 //Handle interrupts
 .macro intr_stub nr
 .global intr_stub_\nr
-.align 16
+.align 32
 intr_stub_\nr:
-	pushl $0
-	pushl $\nr
+	pushq $0
+	pushq $\nr
 	jmp intr_common_handler
 .endm
 .macro intr_stub_error_code nr
 .global intr_stub_\nr
-.align 16
+.align 32
 intr_stub_\nr:
-	pushl $\nr
+	pushq $\nr
 	jmp intr_common_handler
 .endm
 intr_stub 0
@@ -310,60 +316,66 @@ intr_stub 255
 .extern handleINT
 intr_common_handler:
   cli
-	push %ebp
-	push %edi
-	push %esi
-	push %edx
-	push %ecx
-	push %ebx
-	push %eax
+	push %r15
+	push %r14
+	push %r13
+	push %r12
+	push %r11
+	push %r10
+	push %r9
+	push %r8
+	push %rbp
+	push %rdi
+	push %rsi
+	push %rdx
+	push %rcx
+	push %rbx
+	push %rax
+	mov $8, %rcx
+	mov $fldval, %rbx
+.storeloop:
+	fstpl (%rbx)
+	mov (%rbx), %rax
+	push %rax
+	loop .storeloop
+
 	//Load kernel datasegs
 	mov $0x10, %ax
 	mov %ax, %ds
 	mov %ax, %es
-	mov $8, %ecx
-	mov $fld_hi, %ebx
-	mov $fld_lo, %edx
-.storeloop:
-	fstpl (%edx)
-	mov (%edx), %eax
-	push %eax
-	mov (%ebx), %eax
-	push %eax
-	loop .storeloop
-
-	push %esp
+	push %rsp
 	call handleINT
-	mov %eax, %esp
-	mov $8, %ecx
-	mov $fld_hi, %ebx
-	mov $fld_lo, %edx
+	mov %rax, %rsp
+	mov $8, %rcx
+	mov $fldval, %rbx
 .loadloop:
-	pop %eax
-	mov %eax, (%ebx)
-	pop %eax
-	mov %eax, (%edx)
-	fldl (%ebx)
+	pop %rax
+	mov %rax, (%rbx)
+	fldl (%rbx)
 	loop .loadloop
 
 	//Load user datasegs
 	mov $0x23, %ax
 	mov %ax, %ds
 	mov %ax, %es
-	pop %eax
-	pop %ebx
-	pop %ecx
-	pop %edx
-	pop %esi
-	pop %edi
-	pop %ebp
+	pop %rax
+	pop %rbx
+	pop %rcx
+	pop %rdx
+	pop %rsi
+	pop %rdi
+	pop %rbp
+	pop %r8
+	pop %r9
+	pop %r10
+	pop %r11
+	pop %r12
+	pop %r13
+	pop %r14
+	pop %r15
 	// Take error code and interrupt number from stack
-	add $8, %esp
+	add $16, %rsp
 	// Exit interrupt
 	iret
-
 .section .data
-fld_lo:
-.space 4
-fld_hi:
-.space 4
+fldval:

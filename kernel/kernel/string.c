@@ -15,7 +15,7 @@ void memmove(void* dst, void* src, uint32_t size) {
 }
 uint32_t strlen(const char* str) {
 	uint32_t i=0;
-	char* str2=(char*)((int)str);
+	char* str2=(char*)((uintptr_t)str);
 	while(*str2) {
 		i++;
 		str2++;

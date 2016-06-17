@@ -3,13 +3,12 @@ OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:x86-64)
 SECTIONS
 {
-	. = 0x100000;
-	kernel_start = .;
-	.text : {
-		*(multiboot)
+  . = 0x400000;
+  .text : {
+		
 		*(.text)
-	}
-	.data ALIGN(0x200000) : {
+  }
+  .data ALIGN(0x200000) : {
 		start_ctors = .;
 			KEEP(*( .init_array ));
 			KEEP(*(SORT_BY_INIT_PRIORITY( .init_array.* )));
@@ -19,6 +18,7 @@ SECTIONS
 			*(.dtors)
 		end_dtors = .;
 		*(.data)
+    *(.got)
 	}
 	.rodata ALIGN(0x200000) : {
 		*(.rodata)
@@ -27,5 +27,4 @@ SECTIONS
 		*(.bss)
 	}
 	. = ALIGN(0x200000);
-	kernel_end = .;
 }
