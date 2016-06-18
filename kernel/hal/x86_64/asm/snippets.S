@@ -1,7 +1,7 @@
 .global loadGDT
 //void _stdcall loadGDT(struct gdtp* ptr);
 loadGDT:
-	mov 0x8(%rsp), %rax // Load argument
+	mov %rdi, %rax // Load argument
 	lgdt (%rax)
 	//GDT is loaded now
 	mov $0x10, %ax
@@ -11,21 +11,19 @@ loadGDT:
 	mov %ax, %gs
 	mov %ax, %ss
 	mov $0x10, %rax
-.code32
-	ljmp $8, $.1 //Hacky hack
-.code64
+	//ljmp $8, $.1 //Hell, I don't care. FFS, there is not a single method to load a GDT in long mode.
 .1:
 	ret
 .global loadIDT
 //void _stdcall loadIDT(struct idtp* ptr);
 loadIDT:
-	mov 0x8(%rsp), %rax
+	mov %rdi, %rax
 	lidt (%rax)
 	ret
 .global enterPaging
 //void _stdcall enterPaging(uint32** pd);
 enterPaging:
-  mov 0x8(%rsp), %rax
+  mov %rdi, %rax
   mov %rax, %cr3
   mov %cr4, %rax
   or $0x10, %rax
@@ -271,7 +269,7 @@ intr_stub 212
 intr_stub 213
 intr_stub 214
 intr_stub 215
-intr_stub 216
+intr_stub 4216
 intr_stub 217
 intr_stub 218
 intr_stub 219
@@ -343,7 +341,7 @@ intr_common_handler:
 	mov $0x10, %ax
 	mov %ax, %ds
 	mov %ax, %es
-	push %rsp
+	mov %rsp, %rax
 	call handleINT
 	mov %rax, %rsp
 	mov $8, %rcx

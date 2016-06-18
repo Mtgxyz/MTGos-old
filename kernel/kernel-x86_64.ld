@@ -3,7 +3,7 @@ OUTPUT_FORMAT(elf32-i386)
 OUTPUT_ARCH(i386:x86-64)
 SECTIONS
 {
-	. = 0x100000;
+	. = 0x200000;
 	kernel_start = .;
 	.text : {
 		*(multiboot)

@@ -33,7 +33,7 @@ screenout_clear:
   int $0x30
   pop %ebx
   ret
-  
+
 .global screenout_setcolor
 // void * screenout_setcolor(void* handle, uint32_t BG, uint32_t FG)
 screenout_setcolor:

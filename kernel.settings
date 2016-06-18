@@ -1,4 +1,4 @@
-arch = x86
+arch = x86_64
 #MODE = debug
 MODE = release # enables optimization
 

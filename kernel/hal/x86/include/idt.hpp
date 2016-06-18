@@ -9,7 +9,7 @@
 #define IDT_RING_3         0x60
 #define IDT_USED           0x80
 #define SEG_KERNEL         0x08
-#define SEG_USER           0x18 /*NEVER USE!!*/
+#define SEG_USER           0x08 /*NEVER USE!!*/
 #define SEG_DBL_FAULT      0x28 /*Only use for double fault handler!!*/
 extern "C" {
 	void loadIDT(void * ptr);
