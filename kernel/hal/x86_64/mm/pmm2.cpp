@@ -17,16 +17,16 @@ PMM2::PMM2(): pmm3() {
 }
 auto PMM2::markUsed(const void * addr, uint32_t length) -> bool {
   uintptr_t add=(uintptr_t)addr;
-  uint32_t pagetid = SPLIT1_UNSHIFT(add);
+  uint64_t pagetid = SPLIT1_UNSHIFT(add);
 
   //Check if used
-  for(uintptr_t curr_addr=add+length;curr_addr>=add;curr_addr-=0x200000) {
+  for(uintptr_t curr_addr=add+length;curr_addr>add;curr_addr-=0x200000) {
     if(pageTable[SPLIT1_UNSHIFT(curr_addr)])
       return false;
   }
   //Mark as used
   uint64_t counter=1;
-  for(uintptr_t curr_addr=add+length;curr_addr>=add;curr_addr-=0x200000) {
+  for(uintptr_t curr_addr=add+length;curr_addr>add;curr_addr-=0x200000) {
     pageTable[SPLIT1_UNSHIFT(curr_addr)]=counter++;
     pmm3.markUsed((void*)curr_addr);
   }

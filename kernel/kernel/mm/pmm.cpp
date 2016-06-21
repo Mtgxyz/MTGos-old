@@ -1,6 +1,17 @@
 #include <base.hpp>
 #include <pmm.hpp>
 #include <stdint.h>
+#ifdef __LP64
+#define PAGESIZE 0x200000
+#define UNSHIFT(a) ((a)>>20)
+#define SHIFT(a) ((a)<<20)
+#define FLAGS 0x7ffff
+#else
+#define PAGESIZE 4096
+#define UNSHIFT(a) ((a)>>12)
+#define SHIFT(a) ((a)<<12)
+#define FLAGS 0xfff
+#endif
 void *operator new(size_t size) {
   return MTGosHAL::mm.alloc(size);
 }
@@ -24,12 +35,12 @@ namespace MTGosHAL {
   auto PMM::alloc(size_t length) -> void * {
     if(!head) {
       //Alloc space for head
-      if(length+sizeof(malloc_t)<=4096) { //Small optimization. The routine for allocating more than one continuous page is terribly slow.
+      if(length+sizeof(malloc_t)<=PAGESIZE) { //Small optimization. The routine for allocating more than one continuous page is terribly slow.
         void *tmp;
         *this >> tmp;
         head=(malloc_t*)tmp;
       } else
-        head=(malloc_t*)(*this)(((length+sizeof(malloc_t))>>12)+1);
+        head=(malloc_t*)(*this)(UNSHIFT((length+sizeof(malloc_t)))+1);
       if(!head) //The alloc() didn't work! We're out of RAM!
         return nullptr;
       head->len=length;
@@ -42,7 +53,7 @@ namespace MTGosHAL {
     malloc_t* last=nullptr;
     do {
       uintptr_t loc=(uintptr_t)curr+sizeof(malloc_t)+curr->len;
-      if((loc+length+sizeof(malloc_t))<((loc&(~0xFFF))+4096) &&
+      if((loc+length+sizeof(malloc_t))<((loc&(~FLAGS))+PAGESIZE) &&
          ((!curr->next) || (loc+length+sizeof(malloc_t))<((uintptr_t)(curr->next)))) {
         malloc_t *allocd=(malloc_t *)loc;
         allocd->len=length;
@@ -59,12 +70,12 @@ namespace MTGosHAL {
       curr=curr->next;
     } while(curr);
     malloc_t *allocd=nullptr;
-    if(length+sizeof(malloc_t)<=4096) { //Small optimization. The routine for allocating more than one continuous page is terribly slow.
+    if(length+sizeof(malloc_t)<=PAGESIZE) { //Small optimization. The routine for allocating more than one continuous page is terribly slow.
       void *tmp;
       *this >> tmp;
       allocd=(malloc_t*)tmp;
     } else
-      allocd=(malloc_t*)(*this)(((length+sizeof(malloc_t))>>12)+1);
+      allocd=(malloc_t*)(*this)(UNSHIFT(length+sizeof(malloc_t))+1);
     if(!allocd) //The alloc() didn't work! We're out of RAM!
       return nullptr;
     last->next=allocd;
@@ -83,8 +94,8 @@ namespace MTGosHAL {
     chk--;
     do {
       if(curr==chk) {
-        uintptr_t start=((uintptr_t)chk)&(~0xFFF);
-        uintptr_t end=start+0x1000;
+        uintptr_t start=((uintptr_t)chk)&(~FLAGS);
+        uintptr_t end=start+PAGESIZE;
         if((((uintptr_t)(curr->last)<start)||((uintptr_t)(curr->last)>=end))&&(((uintptr_t)(curr->next)>=end)||((uintptr_t)(curr->next)<start))) {
           *this << (void*)start;
         }

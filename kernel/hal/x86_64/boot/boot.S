@@ -14,6 +14,7 @@
 .extern init
 .global _start
 _start:
+  cli
   finit
   mov $mb_ptr, %edi
   stosl
@@ -44,6 +45,18 @@ x86_64_OK:
   lodsl
   stosl
   mov $pagedirPT, %edi
+  lodsl
+  stosl
+  lodsl
+  stosl
+  lodsl
+  stosl
+  lodsl
+  stosl
+  lodsl
+  stosl
+  lodsl
+  stosl
   lodsl
   stosl
   lodsl
@@ -119,6 +132,9 @@ pmfill:
 .int 0
 pdptfill:
 .quad 0x87
+.quad 0x40000087
+.quad 0x80000087
+.quad 0xC0000087
 .section .bss
 mb_ptr:
 // These 8 Bytes will never be used when the stack comes near it

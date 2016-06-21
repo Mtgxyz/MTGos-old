@@ -4,8 +4,8 @@ OBJS = $(addsuffix .o,$(basename $(SRCS)))
 CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc
 ASFLAGS = $(ARCHFLAGS)
-CFLAGS = $(ARCHFLAGS) -Wall -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie
-CPPFLAGS = $(ARCHFLAGS) -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie
+CFLAGS += $(ARCHFLAGS) -Wall -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie
+CPPFLAGS += $(ARCHFLAGS) -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie
 all: $(OBJS)
 
 %.o: %.cpp

@@ -39,6 +39,8 @@ namespace MTGosHAL {
 	template <>
 	auto Output::operator<<<int>(int output) -> Output &;
 	template <>
+	auto Output::operator<<<long int>(long int output) -> Output &;
+	template <>
 	auto Output::operator<<<char>(char output) -> Output &;
 	template <>
 	auto Output::operator<<<char*>(char* output) -> Output &;

@@ -1,6 +1,6 @@
 arch = x86_64
-#MODE = debug
-MODE = release # enables optimization
+MODE = debug
+#MODE = release # enables optimization
 
 export PATH := $(HOME)/opt/bin:$(PATH)
 ARCHFLAGS =
@@ -14,9 +14,9 @@ else
 endif
 
 ifeq ($(MODE),debug)
-  CFLAGS += -g3 -DDEBUG
-	CPPFLAGS += -g3 -DDEBUG
+  CFLAGS := -g3 -DDEBUG
+  CPPFLAGS := -g3 -DDEBUG
 else
-	CFLAGS += -O2
-	CPPFLAGS += -O2
+  CFLAGS := -O2
+  CPPFLAGS := -O2
 endif

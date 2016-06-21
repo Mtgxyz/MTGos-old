@@ -5,7 +5,7 @@ namespace MTGosHAL {
 		return inb(port+SERIAL_LSR)&0x20;
 	}
 	auto Serial::putChar(char chr) -> void {
-//		if(!works)
+		if(!works)
 			return;
 		int tries=65535;
 		while(!isTransmitEmpty()) {

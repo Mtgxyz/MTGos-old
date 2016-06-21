@@ -269,7 +269,7 @@ intr_stub 212
 intr_stub 213
 intr_stub 214
 intr_stub 215
-intr_stub 4216
+intr_stub 216
 intr_stub 217
 intr_stub 218
 intr_stub 219
@@ -341,7 +341,8 @@ intr_common_handler:
 	mov $0x10, %ax
 	mov %ax, %ds
 	mov %ax, %es
-	mov %rsp, %rax
+	mov %rsp, %rdi
+	add $0x80, %rsp //Respect the useless red zone.
 	call handleINT
 	mov %rax, %rsp
 	mov $8, %rcx
