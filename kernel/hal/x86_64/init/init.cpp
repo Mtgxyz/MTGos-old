@@ -10,7 +10,8 @@
 #include <idt.hpp>
 #include <pmm.hpp>
 extern "C" void intr_stub_0(void);
-void main(void ** programs);
+void main(void ** programs, MTGosHAL::Serial debug, MTGosHAL::PMM mm, MTGosHAL::Screen out,
+	MTGosHAL::Screen err, MTGosHAL::Keyboard in, MTGosHAL::Multitasking tasks, MTGosHAL::BlockDevice disk);
 void** progs;
 namespace MTGosHAL {
   Serial debug;
@@ -21,6 +22,7 @@ namespace MTGosHAL {
 	Screen err;
   Keyboard in;
   Multitasking tasks;
+  BlockDevice disk;
   struct multiboot_info* ebx;
   void main(long eax, struct multiboot_info* mb, uint64_t**** pt) {
     ebx=mb;
@@ -57,12 +59,30 @@ namespace MTGosHAL {
   auto startup() -> void {
     //asm volatile("ltr %%ax" : : "a"(5<<3));
 
-    debug << "Init MM\n";
+    out << "Init MM\n";
     new (&mm) PMM(ebx);
 
 
-    debug << "Init Keyboard\n";
+    out << "Init Keyboard\n";
     new (&in) Keyboard();
+
+    out << "Init Multitasking\n";
+		new (&tasks) Multitasking();
+
+    out << "Init blockdev\n";
+    new (&disk) BlockDevice();
+    out << "Kernel initialized\n";
+    multiboot_mod_list *mods = (multiboot_mod_list*) (uint64_t)(ebx->mods_addr);
+		progs=(void**)mm.alloc(8192);
+    for(int i=0;i<1024;i++) {
+      progs[i]=nullptr;
+    }
+		for(uint32_t i=0;i<(ebx->mods_count<1023?ebx->mods_count:1023);i++) { //Basically until MIN(ebx->mods_count, 1023), as we only support loading up to 1023 programs directly.
+			progs[i]=(void*)((uint64_t)mods[i].mod_start);
+			out << "Found module!\n";
+		}
+		::main(progs, debug, mm, out, err, in, tasks, disk);
+
   }
 }
 typedef void (*constructor)();

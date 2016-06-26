@@ -13,6 +13,9 @@ void memmove(void* dst, void* src, uint32_t size) {
 			to[i]=from[i]; //This would get optimized by gcc to memmove(dst, src, size); if optimizations are enabled.
 	}
 }
+void memcpy(void* dest, void* src, uint32_t size) {
+	memmove(dest, src, size);
+}
 uint32_t strlen(const char* str) {
 	uint32_t i=0;
 	char* str2=(char*)((uintptr_t)str);

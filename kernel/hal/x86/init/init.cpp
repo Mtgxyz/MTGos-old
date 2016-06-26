@@ -10,7 +10,8 @@
 #include <blockdev.hpp>
 #include <pmm.hpp>
 extern "C" void intr_stub_0(void);
-void main(void ** programs);
+void main(void ** programs, MTGosHAL::Serial &debug, MTGosHAL::PMM &mm, MTGosHAL::Screen &out,
+	MTGosHAL::Screen &err, MTGosHAL::Keyboard &in, MTGosHAL::Multitasking &tasks, MTGosHAL::BlockDevice &disk);
 void** progs;
 namespace MTGosHAL {
 	Serial debug;
@@ -77,7 +78,7 @@ namespace MTGosHAL {
 			progs[i]=(void*)(mods[i].mod_start);
 			debug << "Found module!\n";
 		}
-		::main(progs);
+		::main(progs, debug, mm, out, err, in, tasks, disk);
     uint8_t buf[512];
     disk.readSector(disk.getDriveNumByName("ATA0m1"),0,buf);
     out << (char*)buf;

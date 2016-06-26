@@ -4,6 +4,7 @@ OBJS = $(addsuffix .o,$(basename $(SRCS)))
 
 CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc
+AR = $(PREFIX)ar
 ASFLAGS = -m32
 CFLAGS += -m32 -Wall -fno-stack-protector -nostdinc -Ic_include/ -I../../kernel/c_include -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie
 CPPFLAGS += -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder

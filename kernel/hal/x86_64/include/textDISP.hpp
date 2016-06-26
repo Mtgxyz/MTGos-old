@@ -43,20 +43,23 @@ namespace MTGosHAL {
 		YELLOW=0xFFFF55,
 		WHITE=0xFFFFFF
 	};
-	class Screen: public Output {
+
+	class Screen {
 		private:
 			FG_color fg;
 			BG_color bg;
 			uint32_t* lfb;
+			int base;
 			auto putChar(char c) -> void;
 		public:
-			Screen(): fg(FG_color::WHITE), bg(BG_color::BLACK) {
+			auto puts(const char *s) -> void;
+			Screen(): fg(FG_color::WHITE), bg(BG_color::BLACK), base(10) {
 			}
 			Screen(struct multiboot_info* mb_info): Screen() {init(mb_info);}
 			auto init(struct multiboot_info*) -> void;
 			template <typename T>
 			auto operator<< (T output) -> Screen & {
-				Output::operator<<<T>(output);
+				puts(output);
 				return *this;
 			}
 			auto clrscr() -> void;
@@ -69,5 +72,15 @@ namespace MTGosHAL {
 	auto Screen::operator<<<FG_color>(FG_color fg) -> Screen &;
 	template <>
 	auto Screen::operator<<<BG_color>(BG_color bg) -> Screen &;
+	template <>
+	auto Screen::operator<<<Base>(Base output) -> Screen &;
+	template <>
+	auto Screen::operator<<<int>(int output) -> Screen &;
+	template <>
+	auto Screen::operator<<<long int>(long int output) -> Screen &;
+	template <>
+	auto Screen::operator<<<char>(char output) -> Screen &;
+	template <>
+	auto Screen::operator<<<char*>(char* output) -> Screen &;
 }
 #endif

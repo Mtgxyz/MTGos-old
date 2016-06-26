@@ -16,6 +16,8 @@ namespace MTGosHAL {
 PMM2::PMM2(): pmm3() {
 }
 auto PMM2::markUsed(const void * addr, uint32_t length) -> bool {
+  if(length<0x200000)
+    length=0x200000;
   uintptr_t add=(uintptr_t)addr;
   uint64_t pagetid = SPLIT1_UNSHIFT(add);
 
