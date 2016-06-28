@@ -1,15 +1,20 @@
-arch = x86_64
+arch = 3ds
 MODE = debug
 #MODE = release # enables optimization
 
 export PATH := $(HOME)/opt/bin:$(PATH)
-ARCHFLAGS =
 ifeq ($(arch),x86)
   PREFIX = i686-elf-
+  libpath = i686-elf
 else
   ifeq ($(arch),x86_64)
     PREFIX = x86_64-elf-
-    ARCHFLAGS =
+    libpath = x86_64-elf
+  else
+    ifeq ($(arch),3ds)
+      PREFIX = arm-none-eabi-
+      libpath = arm-none-eabi
+    endif
   endif
 endif
 

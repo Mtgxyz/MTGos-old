@@ -19,7 +19,7 @@ all: $(OBJS)
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $^
 
-%.o: $.S
+%.o: %.S
 	$(CC) $(CFLAGS) -c -o $@ $^
 
 clean:
