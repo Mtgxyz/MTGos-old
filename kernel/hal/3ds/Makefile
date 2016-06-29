@@ -4,7 +4,7 @@ ARM11SRCS = $(shell find arm11 -name '*.cpp' -o -name '*.[cS]')
 ARM9OBJS = $(addsuffix .o,$(basename $(ARM9SRCS)))
 ARM11OBJS = $(addsuffix .o,$(basename $(ARM11SRCS)))
 ARM9FLAGS = -mcpu=arm946e-s -march=armv5te -mlittle-endian
-ARM11FLAGS = -mcpu=mpcore -mlittle-endian
+ARM11FLAGS = -mcpu=mpcore -mlittle-endian -mtune=mpcore -mfpu=vfp
 
 CPP = $(PREFIX)g++
 CC = $(PREFIX)gcc

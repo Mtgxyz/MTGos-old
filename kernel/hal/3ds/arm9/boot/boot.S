@@ -44,8 +44,8 @@ _start:
   mrc p15, 0, r0, c1, c0, 0  // read control register
   orr r0, r0, #(1<<18)       // - itcm enable
   orr r0, r0, #(1<<16)       // - dtcm enable
-  orr r0, r0, #(1<<12)       // - instruction cache enable
-  orr r0, r0, #(1<<2)        // - data cache enable
+  //orr r0, r0, #(1<<12)       // - instruction cache enable
+  //orr r0, r0, #(1<<2)        // - data cache enable
   orr r0, r0, #(1<<0)        // - mpu enable
   mcr p15, 0, r0, c1, c0, 0  // write control register
 
