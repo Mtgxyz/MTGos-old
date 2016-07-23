@@ -8,6 +8,9 @@
 int x=0, y=0;
 namespace MTGosHAL {
 	auto Screen::putChar(char c) -> void {
+		putChar((unsigned short)c);
+	}
+	auto Screen::putChar(unsigned short c) -> void {
 		switch(c) {
 			case '\n':
 				x=0; y++;
@@ -28,10 +31,10 @@ namespace MTGosHAL {
 			default:
 				for(int lx=0;lx<16;lx++) {
 					for(int ly=0;ly<16;ly++) {
-						if(font[(int)((uint8_t)c)][ly]&(1<<(16-lx))) {
-							lfb[(x*16+lx)+(y*16+ly)*1024]=0xFFFFFF;//static_cast<uint32_t>(fg);
+						if(font[(int)(c)][ly]&(1<<(16-lx))) {
+							lfb[(x*16+lx)+(y*16+ly)*1024]=static_cast<uint32_t>(fg);
 						} else {
-							lfb[(x*16+lx)+(y*16+ly)*1024]=0x000000;//static_cast<uint32_t>(bg);
+							lfb[(x*16+lx)+(y*16+ly)*1024]=static_cast<uint32_t>(bg);
 						}
 					}
 				}
@@ -46,7 +49,7 @@ namespace MTGosHAL {
 	}
 	auto Screen::clrscr() -> void {
 		for(int p=0;p<1024*786;p++) {
-			lfb[p]=0x000000;//static_cast<uint32_t>(bg);
+			lfb[p]=static_cast<uint32_t>(bg);
 		}
 		x=y=0;
 	}
@@ -58,7 +61,7 @@ namespace MTGosHAL {
 		}
 		for(int ly=786-16;ly<786;ly++) {
 			for(int lx=0;lx<1024;lx++) {
-				lfb[lx+ly*1024]=0x000000;//static_cast<uint32_t>(bg);
+				lfb[lx+ly*1024]=static_cast<uint32_t>(bg);
 			}
 		}
 		y--;
@@ -105,8 +108,12 @@ namespace MTGosHAL {
 				bool wide_char=width[i].width==0x10;
 				if(wide_char) {
 					CHR16* chr=(CHR16*)((char*)(&chr_begin[hwcount]));
-					for(int j=0;j<16;j++)
-						::font[i][j]=chr->rows[j];
+					for(int j=0;j<16;j++) {
+						uint16_t tmp=chr->rows[j]&0xFF;
+						tmp <<= 8;
+						tmp += chr->rows[j]>>8;
+						::font[i][j]=tmp;
+					}
 					hwcount+=2;
 				} else {
 					for(int j=0;j<16;j++)
@@ -175,5 +182,10 @@ namespace MTGosHAL {
 	auto Screen::operator<<<char*>(char* output) -> Screen & {
 		puts(output);
 		return *this;
+	}
+	auto Screen::puts(String& output) -> void {
+		for(size_t i=0;i<output.size();i++) {
+			putChar((uint16_t)output[i]);
+		}
 	}
 }

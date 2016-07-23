@@ -82,7 +82,8 @@ namespace MTGosHAL {
     uint8_t buf[512];
     disk.readSector(disk.getDriveNumByName("ATA0m1"),0,buf);
     out << (char*)buf;
-		sti();
+	out << "こんにちは、ユニコード。\nЗдравствуй, Юникод.\nΓεια σου, Γιούνικοντ.\n안녕하세요, 유니코드.\n"_s;
+		//sti();
 		for(;;);
 	}
 }

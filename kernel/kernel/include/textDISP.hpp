@@ -3,6 +3,7 @@
 #include <base.hpp>
 #include <stdint.h>
 #include <output.hpp>
+#include <string.hpp>
 #define SCREEN_WIDTH 128
 #define SCREEN_HEIGHT 96
 namespace MTGosHAL {
@@ -51,7 +52,9 @@ namespace MTGosHAL {
 			int base;
 			auto putChar(char c) -> void;
 		public:
+			auto putChar(unsigned short c) -> void;
 			auto puts(const char *s) -> void;
+			auto puts(String &) -> void;
 			Screen(): fg(FG_color::WHITE), bg(BG_color::BLACK), base(10) {
 			}
 			template <typename T>

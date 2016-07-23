@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <output.hpp>
 #include <multiboot.h>
+#include <string.hpp>
 #define SCREEN_WIDTH 64
 #define SCREEN_HEIGHT 48
 namespace MTGosHAL {
@@ -52,7 +53,9 @@ namespace MTGosHAL {
 			auto putChar(char c) -> void;
 			int base;
 		public:
+			auto putChar(unsigned short c) -> void;
 			auto puts(const char *s) -> void;
+			auto puts(String &) -> void;
 			Screen(): fg(FG_color::WHITE), bg(BG_color::BLACK), base(10) {
 			}
 			Screen(struct multiboot_info* mb_info): Screen() {init(mb_info);}
