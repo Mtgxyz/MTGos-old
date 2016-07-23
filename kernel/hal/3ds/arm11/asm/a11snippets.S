@@ -11,7 +11,7 @@ _a11vectors_begin:
   b _svc
   b udi
 start:
-  b =_start
+//  b _start
 .extern handleINT11
 data_abort:
   sub lr, #8

@@ -2,15 +2,15 @@
 all: mtgos user
 
 mtgos:
-	make -C kernel
+	$(MAKE) -C kernel
 	mv kernel/mtgos mtgos
 
 user:
-	make -C user
+	$(MAKE) -C user
 	mv user/*.elf .
 
 clean:
-	make -C kernel clean
+	$(MAKE) -C kernel clean
 	rm -rf mtgos
 	find . -name '*.o' -delete
 

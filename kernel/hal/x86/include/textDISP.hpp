@@ -4,8 +4,8 @@
 #include <stdint.h>
 #include <output.hpp>
 #include <multiboot.h>
-#define SCREEN_WIDTH 128
-#define SCREEN_HEIGHT 96
+#define SCREEN_WIDTH 64
+#define SCREEN_HEIGHT 48
 namespace MTGosHAL {
 	enum class BG_color : uint32_t {
 		BLACK=0x000000,

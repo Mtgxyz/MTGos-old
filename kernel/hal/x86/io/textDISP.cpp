@@ -26,12 +26,12 @@ namespace MTGosHAL {
 			case '\0':
 				break;
 			default:
-				for(int lx=0;lx<8;lx++) {
-					for(int ly=0;ly<8;ly++) {
-						if(font[(int)((uint8_t)c)][ly]&(1<<lx)) {
-							lfb[(x*8+lx)+(y*8+ly)*1024]=0xFFFFFF;//static_cast<uint32_t>(fg);
+				for(int lx=0;lx<16;lx++) {
+					for(int ly=0;ly<16;ly++) {
+						if(font[(int)((uint8_t)c)][ly]&(1<<(16-lx))) {
+							lfb[(x*16+lx)+(y*16+ly)*1024]=0xFFFFFF;//static_cast<uint32_t>(fg);
 						} else {
-							lfb[(x*8+lx)+(y*8+ly)*1024]=0x000000;//static_cast<uint32_t>(bg);
+							lfb[(x*16+lx)+(y*16+ly)*1024]=0x000000;//static_cast<uint32_t>(bg);
 						}
 					}
 				}
@@ -51,12 +51,12 @@ namespace MTGosHAL {
 		x=y=0;
 	}
 	auto Screen::scroll() -> void {
-		for(int ly=0;ly<786-8;ly++) {
+		for(int ly=0;ly<786-16;ly++) {
 			for(int lx=0;lx<1024;lx++) {
-				lfb[lx+ly*1024]=lfb[lx+(ly+8)*1024];
+				lfb[lx+ly*1024]=lfb[lx+(ly+16)*1024];
 			}
 		}
-		for(int ly=786-8;ly<786;ly++) {
+		for(int ly=786-16;ly<786;ly++) {
 			for(int lx=0;lx<1024;lx++) {
 				lfb[lx+ly*1024]=0x000000;//static_cast<uint32_t>(bg);
 			}
@@ -87,6 +87,34 @@ namespace MTGosHAL {
 
 	auto Screen::init(struct multiboot_info* mb_info) -> void {
 		lfb=(uint32_t*)((uintptr_t)mb_info->framebuffer_addr);
+		//Load font
+		multiboot_mod_list *mods = (multiboot_mod_list*) mb_info->mods_addr;
+		for(int i=0;i<65536;i++)
+			for(int j=0;j<16;j++)
+				font[i][j]=0;
+		for(uint32_t i=0;i<mb_info->mods_count;i++) {
+			fontfile* font=(fontfile*)(mods[i].mod_start);
+			if((font->magic[0]!='F')||(font->magic[1]!='O')||(font->magic[2]!='N')||(font->magic[3]!='T')) //Is it a font file?
+				continue;
+			charmap* map=(charmap*)((char*)font+font->charmap_off);
+			charwidth* width=(charwidth*)((char*)font+font->charwidth_off);
+			CHR8* chr_begin=(CHR8*)((char*)font+font->chr_off);
+			uint32_t hwcount=0;
+			for(uint32_t i=0;i<font->no_char;i++) {
+				uint16_t char_num=map[i].charnumber;
+				bool wide_char=width[i].width==0x10;
+				if(wide_char) {
+					CHR16* chr=(CHR16*)((char*)(&chr_begin[hwcount]));
+					for(int j=0;j<16;j++)
+						::font[i][j]=chr->rows[j];
+					hwcount+=2;
+				} else {
+					for(int j=0;j<16;j++)
+						::font[i][j]=(uint16_t)(((uint16_t)chr_begin[hwcount].rows[j])<<8);
+					hwcount++;
+				}
+			}
+		}
 		//clrscr();
 		//Render '\001' character
 		for(int tx=0;tx<16;tx++) {

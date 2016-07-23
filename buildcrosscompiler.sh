@@ -7,26 +7,26 @@ function buildscript() {
 	mkdir build-binutils
 	cd build-binutils
 	../binutils-2.26/configure --prefix=$CROSSPATH --target=$1 --with-sysroot --disable-nls --disable-werror 2>&1  > /dev/null
-	make -j8 2>&1 > /dev/null
-	make install 2>&1 > /dev/null
+	gmake -j8 2>&1 > /dev/null
+	gmake install 2>&1 > /dev/null
 	cd ..
 	rm -rf build-binutils
 	echo "[$(date +%c)] Building gcc for $1." | tee -a buildlog
 	mkdir build-gcc
 	cd build-gcc
 	../gcc-6.1.0/configure --prefix=$CROSSPATH --target=$1 --disable-nls --enable-languages=c,c++ --without-headers 2>&1 > /dev/null
-	make all-gcc -j8 2>&1 > /dev/null
-	make all-target-libgcc -j8 2>&1 > /dev/null
-	make install-gcc 2>&1 > /dev/null
-	make install-target-libgcc 2>&1 > /dev/null
+	gmake all-gcc -j8 2>&1 > /dev/null
+	gmake all-target-libgcc -j8 2>&1 > /dev/null
+	gmake install-gcc 2>&1 > /dev/null
+	gmake install-target-libgcc 2>&1 > /dev/null
 	cd ..
 	rm -rf build-gcc
 	echo "[$(date +%c)] Building gdb for $1." | tee -a buildlog
 	mkdir build-gdb
 	cd build-gdb
 	../gdb-7.11/configure --prefix=$CROSSPATH --target=$1 --disable-nls 2>&1 > /dev/null
-	make -j8 2>&1 > /dev/null
-	make install 2>&1 > /dev/null
+	gmake -j8 2>&1 > /dev/null
+	gmake install 2>&1 > /dev/null
 	cd ..
 	rm -rf build-gdb
 	echo "[$(date +%c)] Cross-compiler for $1 was built." | tee -a buildlog

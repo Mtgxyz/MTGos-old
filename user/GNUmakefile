@@ -1,5 +1,5 @@
 include ../kernel.settings
-SRCS = $(shell find -name '*.cpp')
+SRCS = $(shell find . -name '*.cpp')
 OBJS = $(addsuffix .o,$(basename $(SRCS)))
 AS = $(PREFIX)gcc
 CPP = $(PREFIX)g++

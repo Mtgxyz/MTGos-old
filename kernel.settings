@@ -1,4 +1,4 @@
-arch = 3ds
+arch = x86
 MODE = debug
 #MODE = release # enables optimization
 
