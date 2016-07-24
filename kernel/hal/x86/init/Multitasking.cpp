@@ -11,18 +11,18 @@ auto schedule(struct cpu_state* cpu) -> struct cpu_state* {
 }
 Multitasking::Multitasking(): curr_task(nullptr), first_task(nullptr)
 {
-  for(int i=0;i<32;i++) {
-    if(i==2)
-      continue;
-    tss[i]=0;
-  }
-  tss[2]=0x10;
+    for(int i=0;i<32;i++) {
+        if(i==2)
+            continue;
+        tss[i]=0;
+    }
+    tss[2]=0x10;
     //task_states[0] = initTask(stack_a, user_stack_a, task_a);
     //task_states[1] = initTask(stack_b, user_stack_b, task_b);
     if(!idt.request(0x20,MTGosHAL::schedule)) {
         err << "Could not start multitasking\nFatal error; Kernel halted!\n";
         while(true)
-          asm volatile("cli; hlt");
+            asm volatile("cli; hlt");
     }
 }
 auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
@@ -59,24 +59,24 @@ auto Multitasking::initTask(void(* entry)()) -> struct cpu_state*
     //Create new task class
     Task* task = new Task(state);
     if(first_task)
-      first_task->addTask(task);
+        first_task->addTask(task);
     else {
-      first_task=task;
+        first_task=task;
     }
     return state;
 }
 auto Multitasking::schedule(struct cpu_state* cpu) -> struct cpu_state*
 {
-  Task* next=nullptr;
-  if(curr_task) {
-    next=curr_task->pause(cpu);
-  }
-  if (!next) {
-    next=first_task;
-  }
-  curr_task=next;
-  struct cpu_state* cpu_state=next->unpause();
-  MTGosHAL::tasks.tss[1] = (uint32_t) (cpu_state + 1);
-  return cpu_state;
+    Task* next=nullptr;
+    if(curr_task) {
+        next=curr_task->pause(cpu);
+    }
+    if (!next) {
+        next=first_task;
+    }
+    curr_task=next;
+    struct cpu_state* cpu_state=next->unpause();
+    MTGosHAL::tasks.tss[1] = (uint32_t) (cpu_state + 1);
+    return cpu_state;
 }
 } // namespace MTGosHAL

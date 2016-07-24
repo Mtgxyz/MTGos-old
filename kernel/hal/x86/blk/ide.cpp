@@ -19,22 +19,22 @@
 #define CMD 7
 #define ALTCMD 0x206
 namespace MTGosHAL {
-  IDE::IDE(uint16_t baseport, uint8_t num): baseport(baseport), num(num), existent(0), numDevices(0) {
+IDE::IDE(uint16_t baseport, uint8_t num): baseport(baseport), num(num), existent(0), numDevices(0) {
     if(inb(baseport+CMD)!=0xFF) { //Does the ATA controller return floating bus?
-      // Checking existence of the master
-      outb(baseport+DRV, 0xE0);
-      outb(baseport+LBAlo,0x55);
-      if(inb(baseport+LBAlo)==0x55) {
-        existent|=1;
-        numDevices++;
-      }
-      // Checking existence of the slave
-      outb(baseport+DRV, 0xF0);
-      outb(baseport+LBAlo,0x55);
-      if(inb(baseport+LBAlo)==0x55) {
-        existent|=2;
-        numDevices++;
-      }
+        // Checking existence of the master
+        outb(baseport+DRV, 0xE0);
+        outb(baseport+LBAlo,0x55);
+        if(inb(baseport+LBAlo)==0x55) {
+            existent|=1;
+            numDevices++;
+        }
+        // Checking existence of the slave
+        outb(baseport+DRV, 0xF0);
+        outb(baseport+LBAlo,0x55);
+        if(inb(baseport+LBAlo)==0x55) {
+            existent|=2;
+            numDevices++;
+        }
     } else {
       //err << "ATA device could not be found!\n";
     }
@@ -43,31 +43,31 @@ namespace MTGosHAL {
     inb(baseport+CMD);
     inb(baseport+CMD);
     outb(baseport+ALTCMD,0x00);
-  }
-  auto IDE::getDriveCnt() -> int32_t {return numDevices;}
-  auto IDE::getDriveNumByName(const char* name) -> int32_t {
+}
+auto IDE::getDriveCnt() -> int32_t {return numDevices;}
+auto IDE::getDriveNumByName(const char* name) -> int32_t {
     if(strlen(name)!=5)
-      return -1; //Format is ATA[0-3][sm] (regex)
+        return -1; //Format is ATA[0-3][sm] (regex)
     if((name[0]!=name[2])||(name[2]!='A'))
-      return -1;
+        return -1;
     if(name[1]!='T')
-      return -1;
+        return -1;
     int32_t drivenum=name[3]-0x30;
     if(drivenum!=num)
-      return -1;
+        return -1;
     if((name[4]!='s')&&(name[4]!='m'))
-      return -1;
+        return -1;
     drivenum<<=1;
     drivenum+=(name[4]=='s')?1:0;
     if(!(existent&(1<<drivenum)))
-      return -1;
+        return -1;
     return drivenum;
-  }
-  auto IDE::readSector(int32_t drive, uint64_t sectorNum, uint8_t *buf) -> void {
+}
+auto IDE::readSector(int32_t drive, uint64_t sectorNum, uint8_t *buf) -> void {
     if(drive<(num*2)||drive>(num*2+1))
-      return;
+        return;
     if(!(existent&(1<<(drive-num*2))))
-      return;
+        return;
     while(inb(baseport+ALTCMD)&ATAPIO_BSY);
     outb(baseport+DRV, 0x40 | (drive&1)<<4);
     outb(baseport+SECTOR_CNT, 0);
@@ -85,12 +85,12 @@ namespace MTGosHAL {
     while(inb(baseport+CMD)&0x80);
     uint16_t *bufw=(uint16_t *)buf;
     asm volatile ("rep insw" : : "D"((int)bufw),"d"(baseport),"c"(256));
-  }
-  auto IDE::readSector(int32_t drive, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+}
+auto IDE::readSector(int32_t drive, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
     if(drive<(this->num*2)||drive>(this->num*2+1))
-      return;
+        return;
     if(!(existent&(1<<(drive-this->num*2))))
-      return;
+        return;
     if(num==0)
         return;
     if(num>65536)
@@ -114,12 +114,12 @@ namespace MTGosHAL {
     while(inb(baseport+CMD)&0x80);
     uint16_t *bufw=(uint16_t *)buf;
     asm volatile ("rep insw" : : "D"((int)bufw),"d"(baseport),"c"(256*num));
-  }
-  auto IDE::writeSector(int32_t drive, uint64_t sectorNum, uint8_t *buf) -> void {
+}
+auto IDE::writeSector(int32_t drive, uint64_t sectorNum, uint8_t *buf) -> void {
     if(drive<(this->num*2)||drive>(this->num*2+1))
-      return;
+        return;
     if(!(existent&(1<<(drive-this->num*2))))
-      return;
+        return;
     while(inb(baseport+ALTCMD)&ATAPIO_BSY);
     outb(baseport+SECTOR_CNT, (uint8_t)(0));
     outb(baseport+LBAlo, (uint8_t)(sectorNum>>24));
@@ -138,11 +138,11 @@ namespace MTGosHAL {
         asm volatile("outsw; aad" : : "S"((int)buf),"d"(baseport),"a"(8787)); //The AAD is for creating a short delay between writes, as the compiler might unroll this loop. 
     }
   }
-  auto IDE::writeSector(int32_t drive, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+auto IDE::writeSector(int32_t drive, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
     if(drive<(this->num*2)||drive>(this->num*2+1))
-      return;
+        return;
     if(!(existent&(1<<(drive-this->num*2))))
-      return;
+        return;
     if(num==0)
         return;
     if(num>65536)

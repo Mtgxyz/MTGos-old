@@ -18,47 +18,47 @@
 #define DRV 6
 #define CMD 7
 namespace MTGosHAL {
-  BlockDevice::BlockDevice(): numDevices(0), ata0(0x1F0,0), ata1(0x170,1), ata2(0x1E8,2), ata3(0x168,3) {
+BlockDevice::BlockDevice(): numDevices(0), ata0(0x1F0,0), ata1(0x170,1), ata2(0x1E8,2), ata3(0x168,3) {
     if(getDriveCnt()==0) {
-      //err<<"Not a single device was found!\n";
+        //err<<"Not a single device was found!\n";
     }
-  }
-  auto BlockDevice::getDriveCnt() -> int32_t {return ata0.getDriveCnt()+ata1.getDriveCnt()+ata2.getDriveCnt()+ata3.getDriveCnt();}
-  auto BlockDevice::getDriveNumByName(const char * name) -> int32_t {
+}
+auto BlockDevice::getDriveCnt() -> int32_t {return ata0.getDriveCnt()+ata1.getDriveCnt()+ata2.getDriveCnt()+ata3.getDriveCnt();}
+auto BlockDevice::getDriveNumByName(const char * name) -> int32_t {
     int32_t tmp;
     if((tmp=ata0.getDriveNumByName(name))!=-1)
-      return tmp;
+        return tmp;
     else if((tmp=ata1.getDriveNumByName(name))!=-1)
-      return tmp+ata0.getDriveCnt();
+        return tmp+ata0.getDriveCnt();
     else if((tmp=ata2.getDriveNumByName(name))!=-1)
-      return tmp+ata0.getDriveCnt()+ata1.getDriveCnt();
+        return tmp+ata0.getDriveCnt()+ata1.getDriveCnt();
     else if((tmp=ata3.getDriveNumByName(name))!=-1)
-      return tmp+ata0.getDriveCnt()+ata1.getDriveCnt()+ata2.getDriveCnt();
+        return tmp+ata0.getDriveCnt()+ata1.getDriveCnt()+ata2.getDriveCnt();
     else return -1;
-  }
-  BlockDevice::~BlockDevice() {};
-  auto BlockDevice::readSector(int32_t drv, uint64_t sectorNum, uint8_t *buf) -> void {
+}
+BlockDevice::~BlockDevice() {};
+auto BlockDevice::readSector(int32_t drv, uint64_t sectorNum, uint8_t *buf) -> void {
     ata0.readSector(drv, sectorNum, buf);
     ata1.readSector(drv, sectorNum, buf);
     ata2.readSector(drv, sectorNum, buf);
     ata3.readSector(drv, sectorNum, buf);
-  }
-  auto BlockDevice::readSector(int32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+}
+auto BlockDevice::readSector(int32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
     ata0.readSector(drv, sectorNum, num, buf);
     ata1.readSector(drv, sectorNum, num, buf);
     ata2.readSector(drv, sectorNum, num, buf);
     ata3.readSector(drv, sectorNum, num, buf);
-  }
-  auto BlockDevice::writeSector(int32_t drv, uint64_t sectorNum, uint8_t *buf) -> void {
+}
+auto BlockDevice::writeSector(int32_t drv, uint64_t sectorNum, uint8_t *buf) -> void {
     ata0.writeSector(drv, sectorNum, buf);
     ata1.writeSector(drv, sectorNum, buf);
     ata2.writeSector(drv, sectorNum, buf);
     ata3.writeSector(drv, sectorNum, buf);
-  }
-  auto BlockDevice::writeSector(int32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+}
+auto BlockDevice::writeSector(int32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
     ata0.writeSector(drv, sectorNum, num, buf);
     ata1.writeSector(drv, sectorNum, num, buf);
     ata2.writeSector(drv, sectorNum, num, buf);
     ata3.writeSector(drv, sectorNum, num, buf);
-  }
+}
 }
