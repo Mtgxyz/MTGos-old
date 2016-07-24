@@ -43,4 +43,22 @@ namespace MTGosHAL {
     ata2.readSector(drv, sectorNum, buf);
     ata3.readSector(drv, sectorNum, buf);
   }
+  auto BlockDevice::readSector(int32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+    ata0.readSector(drv, sectorNum, num, buf);
+    ata1.readSector(drv, sectorNum, num, buf);
+    ata2.readSector(drv, sectorNum, num, buf);
+    ata3.readSector(drv, sectorNum, num, buf);
+  }
+  auto BlockDevice::writeSector(int32_t drv, uint64_t sectorNum, uint8_t *buf) -> void {
+    ata0.writeSector(drv, sectorNum, buf);
+    ata1.writeSector(drv, sectorNum, buf);
+    ata2.writeSector(drv, sectorNum, buf);
+    ata3.writeSector(drv, sectorNum, buf);
+  }
+  auto BlockDevice::writeSector(int32_t drv, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+    ata0.writeSector(drv, sectorNum, num, buf);
+    ata1.writeSector(drv, sectorNum, num, buf);
+    ata2.writeSector(drv, sectorNum, num, buf);
+    ata3.writeSector(drv, sectorNum, num, buf);
+  }
 }

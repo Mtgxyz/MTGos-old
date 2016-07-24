@@ -80,7 +80,7 @@ namespace MTGosHAL {
 		}
 		::main(progs, debug, mm, out, err, in, tasks, disk);
     uint8_t buf[512];
-    disk.readSector(disk.getDriveNumByName("ATA0m1"),0,buf);
+    disk.readSector(disk.getDriveNumByName("ATA0m"),0,buf);
     out << (char*)buf;
 	out << "こんにちは、ユニコード。\nЗдравствуй, Юникод.\nΓεια σου, Γιούνικοντ.\n안녕하세요, 유니코드.\n"_s;
 		//sti();

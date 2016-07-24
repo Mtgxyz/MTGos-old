@@ -68,6 +68,7 @@ namespace MTGosHAL {
       return;
     if(!(existent&(1<<(drive-num*2))))
       return;
+    while(inb(baseport+ALTCMD)&ATAPIO_BSY);
     outb(baseport+DRV, 0x40 | (drive&1)<<4);
     outb(baseport+SECTOR_CNT, 0);
     outb(baseport+LBAlo, (uint8_t)(sectorNum>>24));
@@ -84,5 +85,86 @@ namespace MTGosHAL {
     while(inb(baseport+CMD)&0x80);
     uint16_t *bufw=(uint16_t *)buf;
     asm volatile ("rep insw" : : "D"((int)bufw),"d"(baseport),"c"(256));
+  }
+  auto IDE::readSector(int32_t drive, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+    if(drive<(this->num*2)||drive>(this->num*2+1))
+      return;
+    if(!(existent&(1<<(drive-this->num*2))))
+      return;
+    if(num==0)
+        return;
+    if(num>65536)
+        return;
+    if(num==65536)
+        num=0;
+    while(inb(baseport+ALTCMD)&ATAPIO_BSY);
+    outb(baseport+DRV, 0x40 | (drive&1)<<4);
+    outb(baseport+SECTOR_CNT, (uint8_t)(num >> 8));
+    outb(baseport+LBAlo, (uint8_t)(sectorNum>>24));
+    outb(baseport+LBAmid, (uint8_t)(sectorNum>>32));
+    outb(baseport+LBAhi, (uint8_t)(sectorNum>>40));
+    outb(baseport+SECTOR_CNT, (uint8_t)num);
+    outb(baseport+LBAlo, (uint8_t)(sectorNum));
+    outb(baseport+LBAmid, (uint8_t)(sectorNum>>8));
+    outb(baseport+LBAhi, (uint8_t)(sectorNum>>16));
+    outb(baseport+CMD, 0x24);
+    inb(baseport+CMD);
+    inb(baseport+CMD);
+    inb(baseport+CMD);
+    while(inb(baseport+CMD)&0x80);
+    uint16_t *bufw=(uint16_t *)buf;
+    asm volatile ("rep insw" : : "D"((int)bufw),"d"(baseport),"c"(256*num));
+  }
+  auto IDE::writeSector(int32_t drive, uint64_t sectorNum, uint8_t *buf) -> void {
+    if(drive<(this->num*2)||drive>(this->num*2+1))
+      return;
+    if(!(existent&(1<<(drive-this->num*2))))
+      return;
+    while(inb(baseport+ALTCMD)&ATAPIO_BSY);
+    outb(baseport+SECTOR_CNT, (uint8_t)(0));
+    outb(baseport+LBAlo, (uint8_t)(sectorNum>>24));
+    outb(baseport+LBAmid, (uint8_t)(sectorNum>>32));
+    outb(baseport+LBAhi, (uint8_t)(sectorNum>>40));
+    outb(baseport+SECTOR_CNT, (uint8_t)1);
+    outb(baseport+LBAlo, (uint8_t)(sectorNum));
+    outb(baseport+LBAmid, (uint8_t)(sectorNum>>8));
+    outb(baseport+LBAhi, (uint8_t)(sectorNum>>16));
+    outb(baseport+CMD, 0x34);
+    inb(baseport+CMD);
+    inb(baseport+CMD);
+    inb(baseport+CMD);
+    while(inb(baseport+CMD)&ATAPIO_BSY);
+    for(int i=0;i<256;i++) {
+        asm volatile("outsw; aad" : : "S"((int)buf),"d"(baseport),"a"(8787)); //The AAD is for creating a short delay between writes, as the compiler might unroll this loop. 
+    }
+  }
+  auto IDE::writeSector(int32_t drive, uint64_t sectorNum, uint32_t num, uint8_t *buf) -> void {
+    if(drive<(this->num*2)||drive>(this->num*2+1))
+      return;
+    if(!(existent&(1<<(drive-this->num*2))))
+      return;
+    if(num==0)
+        return;
+    if(num>65536)
+        return;
+    if(num==65536)
+        num=0;
+    while(inb(baseport+ALTCMD)&ATAPIO_BSY);
+    outb(baseport+SECTOR_CNT, (uint8_t)(num >> 8));
+    outb(baseport+LBAlo, (uint8_t)(sectorNum>>24));
+    outb(baseport+LBAmid, (uint8_t)(sectorNum>>32));
+    outb(baseport+LBAhi, (uint8_t)(sectorNum>>40));
+    outb(baseport+SECTOR_CNT, (uint8_t)num);
+    outb(baseport+LBAlo, (uint8_t)(sectorNum));
+    outb(baseport+LBAmid, (uint8_t)(sectorNum>>8));
+    outb(baseport+LBAhi, (uint8_t)(sectorNum>>16));
+    outb(baseport+CMD, 0x34);
+    inb(baseport+CMD);
+    inb(baseport+CMD);
+    inb(baseport+CMD);
+    while(inb(baseport+CMD)&ATAPIO_BSY);
+    for(uint32_t i=0;i<(num<<8);i++) {
+        asm volatile("outsw; aad" : : "S"((int)buf),"d"(baseport),"a"(8787)); //The AAD is for creating a short delay between writes, as the compiler might partially unroll this loop. 
+    }
   }
 }
