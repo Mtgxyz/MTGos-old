@@ -78,3 +78,53 @@ auto String::operator[](int i) -> uint32_t {
 String &operator""_s(const char *str, size_t len) {
     return *(new String(str));
 }
+String::operator char*() {
+    int strLen=1;
+    for(uint32_t i=0;i<length;i++) {
+        if(arr[i]<0x80)
+            strLen++;
+        else if(arr[i]<0x800) 
+            strLen+=2;
+        else if(arr[i]<0x10000)
+            strLen+=3;
+        else if(arr[i]<0x200000)
+            strLen+=4;
+        else if(arr[i]<0x4000000)
+            strLen+=5;
+        else
+            strLen+=6;
+    }
+    uint8_t* str=new uint8_t[strLen];
+    int p=0;
+    for(uint32_t i=0;i<length;i++) {
+        if(arr[i]<0x80) {
+            str[p++]=(uint8_t)arr[i];
+        } else if(arr[i]<0x800) {
+            str[p++]=0xC0u|(uint8_t)(arr[i]>>6);
+            str[p++]=(uint8_t)((arr[i]&0x3F)|0x80);
+        } else if(arr[i]<0x1000) {
+            str[p++]=0xE0u|(uint8_t)(arr[i]>>12);
+            str[p++]=(uint8_t)(((arr[i]>>6)&0x3F)|0x80);
+            str[p++]=(uint8_t)((arr[i]&0x3F)|0x80);
+        } else if(arr[i]<0x20000) {
+            str[p++]=0xF0u|(uint8_t)(arr[i]>>18);
+            str[p++]=(uint8_t)(((arr[i]>>12)&0x3F)|0x80);
+            str[p++]=(uint8_t)(((arr[i]>>6)&0x3F)|0x80);
+            str[p++]=(uint8_t)((arr[i]&0x3F)|0x80);
+        } else if(arr[i]<0x400000) {
+            str[p++]=0xF8u|(uint8_t)(arr[i]>>24);
+            str[p++]=(uint8_t)(((arr[i]>>18)&0x3F)|0x80);
+            str[p++]=(uint8_t)(((arr[i]>>12)&0x3F)|0x80);
+            str[p++]=(uint8_t)(((arr[i]>>6)&0x3F)|0x80);
+            str[p++]=(uint8_t)((arr[i]&0x3F)|0x80);
+        } else {
+            str[p++]=0xFCu|(uint8_t)(arr[i]>>30);
+            str[p++]=(uint8_t)(((arr[i]>>24)&0x3F)|0x80);
+            str[p++]=(uint8_t)(((arr[i]>>18)&0x3F)|0x80);
+            str[p++]=(uint8_t)(((arr[i]>>12)&0x3F)|0x80);
+            str[p++]=(uint8_t)(((arr[i]>>6)&0x3F)|0x80);
+            str[p++]=(uint8_t)((arr[i]&0x3F)|0x80);
+        }
+    }
+    return (char*)str;
+}

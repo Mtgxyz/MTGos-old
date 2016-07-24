@@ -10,17 +10,6 @@ void main()
 {
     char arr[4]="123";
     ScreenOut out=ScreenOut(false);
-    int i;
-    out.setColor(BGColor::BLUE, FGColor::YELLOW);
-    for(;;) {
-        long double a;
-        long double b=a;
-        out <<  a;
-        a+=0.5;
-        if(a!=b+0.5)
-            out << " ";
-        else
-            out << "=";
-        out <<  a;
-    }
+    out << "Hallo! Ich bin ein Testprogramm, welches sämtliche Funktionen von MTGos, die vom Usermode zugreifbar sind, testet.\nHello! This is a test program which tests every function from MTGos that is accessable from userspace.\n";
+    out << "Bonjour! Je suis une programme de test. Je teste toute la fonction de MTGos, que est accessible pour le mode d'utilisateur.\nこんにちは。私はテストのプログラムです。全てのアクセス可能な関数は試します。\näöüßÄÖÜẞ\n";
 }

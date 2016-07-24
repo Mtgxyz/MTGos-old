@@ -7,12 +7,14 @@ ScreenOut::ScreenOut(bool err): err(err) {
     
 }
 auto ScreenOut::operator<<(char *text) -> ScreenOut & {
+    String *tmp = new String(text);
     if(!text)
         return *this;
     if(err)
-        MTGosHAL::err << String(text);
+        MTGosHAL::err << *tmp;
     else
-        MTGosHAL::out << String(text);
+        MTGosHAL::out << *tmp;
+    delete tmp;
     return *this;
 }
 auto ScreenOut::clrscr() -> ScreenOut & {

@@ -1,0 +1,8 @@
+xz: Filter chain: --lzma2=dict=8MiB,lc=3,lp=0,pb=2,mode=normal,nice=273,mf=bt4,depth=512
+xz: 94 MiB of memory is required. The limiter is disabled.
+xz: Decompression will need 9 MiB of memory.
+test.elf: 1,684 B / 14.5 KiB = 0.113
+xz: Filter chain: --lzma2=dict=8MiB,lc=3,lp=0,pb=2,mode=normal,nice=273,mf=bt4,depth=512
+xz: 94 MiB of memory is required. The limiter is disabled.
+xz: Decompression will need 9 MiB of memory.
+mtgos.fnt: 578.4 KiB / 2,122.7 KiB = 0.272

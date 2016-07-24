@@ -1,0 +1,69 @@
+Cleaning build...
+gmake -C kernel clean
+gmake[1]: Entering directory '/usr/home/morten/sources/MTGos/kernel'
+gmake -C hal clean
+gmake[2]: Entering directory '/usr/home/morten/sources/MTGos/kernel/hal'
+rm -rf hal.o
+gmake -C x86 clean
+gmake[3]: Entering directory '/usr/home/morten/sources/MTGos/kernel/hal/x86'
+rm -rf ./init/idt.o ./init/Multitasking.o ./init/gdt.o ./init/init.o ./asm/snippets.o ./mm/pmm2.o ./mm/pmm.o ./mm/vmm3.o ./mm/pmm3.o ./io/keyboard.o ./io/textDISP.o ./io/serial.o ./io/output.o ./boot/boot.o ./blk/BlockDevice.o ./blk/ide.o
+gmake[3]: Leaving directory '/usr/home/morten/sources/MTGos/kernel/hal/x86'
+gmake[2]: Leaving directory '/usr/home/morten/sources/MTGos/kernel/hal'
+gmake -C kernel clean
+gmake[2]: Entering directory '/usr/home/morten/sources/MTGos/kernel/kernel'
+rm -rf ./stdstring.o ./Multitasking.o ./filesystem.o ./init.o ./disk/partitions.o ./elf.o ./syscall.o ./string.o
+gmake[2]: Leaving directory '/usr/home/morten/sources/MTGos/kernel/kernel'
+gmake[1]: Leaving directory '/usr/home/morten/sources/MTGos/kernel'
+rm -rf mtgos
+find . -name '*.o' -delete
+Building...
+gmake -C kernel
+gmake[1]: Entering directory '/usr/home/morten/sources/MTGos/kernel'
+gmake -C hal
+gmake[2]: Entering directory '/usr/home/morten/sources/MTGos/kernel/hal'
+gmake -C x86
+gmake[3]: Entering directory '/usr/home/morten/sources/MTGos/kernel/hal/x86'
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o init/idt.o init/idt.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o init/Multitasking.o init/Multitasking.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o init/gdt.o init/gdt.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o init/init.o init/init.cpp
+i686-elf-gcc -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -Ic_include/ -I../../kernel/c_include -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie -c -o asm/snippets.o asm/snippets.S
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o mm/pmm2.o mm/pmm2.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o mm/pmm.o mm/pmm.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o mm/vmm3.o mm/vmm3.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o mm/pmm3.o mm/pmm3.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o io/keyboard.o io/keyboard.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o io/textDISP.o io/textDISP.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o io/serial.o io/serial.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o io/output.o io/output.cpp
+i686-elf-gcc -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -Ic_include/ -I../../kernel/c_include -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie -c -o boot/boot.o boot/boot.S
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o blk/BlockDevice.o blk/BlockDevice.cpp
+i686-elf-g++ -g3 -DDEBUG -m32 -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -I../../kernel/c_include -I../../kernel/include -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fno-pie -Wno-reorder -c -o blk/ide.o blk/ide.cpp
+gmake[3]: Leaving directory '/usr/home/morten/sources/MTGos/kernel/hal/x86'
+ar rcs ../libhal.a x86/init/idt.o x86/init/Multitasking.o x86/init/gdt.o x86/init/init.o x86/asm/snippets.o x86/mm/pmm2.o x86/mm/pmm.o x86/mm/vmm3.o x86/mm/pmm3.o x86/io/keyboard.o x86/io/textDISP.o x86/io/serial.o x86/io/output.o x86/boot/boot.o x86/blk/BlockDevice.o x86/blk/ide.o
+gmake[2]: Leaving directory '/usr/home/morten/sources/MTGos/kernel/hal'
+gmake -C kernel
+gmake[2]: Entering directory '/usr/home/morten/sources/MTGos/kernel/kernel'
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o stdstring.o stdstring.cpp
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o Multitasking.o Multitasking.cpp
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o filesystem.o filesystem.cpp
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o init.o init.cpp
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o disk/partitions.o disk/partitions.cpp
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o elf.o elf.cpp
+i686-elf-g++ -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o syscall.o syscall.cpp
+i686-elf-gcc -g3 -DDEBUG  -Wall -fno-stack-protector -nostdinc -Ic_include/ -ffreestanding -std=c11 -fno-builtin -Werror -nostdlib -g -fpie -c -o string.o string.c
+gmake[2]: Leaving directory '/usr/home/morten/sources/MTGos/kernel/kernel'
+i686-elf-g++ -nostdlib -nodefaultlibs -nostdlib -fno-builtin  -T kernel-x86.ld -z max-page-size=0x1000 -o mtgos kernel/stdstring.o kernel/Multitasking.o kernel/filesystem.o kernel/init.o kernel/disk/partitions.o kernel/elf.o kernel/syscall.o kernel/string.o libhal.a -lgcc
+gmake[1]: Leaving directory '/usr/home/morten/sources/MTGos/kernel'
+mv kernel/mtgos mtgos
+gmake -C user
+gmake[1]: Entering directory '/usr/home/morten/sources/MTGos/user'
+i686-elf-g++  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o mtgos.o mtgos.cpp
+i686-elf-g++  -Wall -fno-stack-protector -nostdinc -std=c++14 -Iinclude/ -Ic_include/ -fno-rtti -fno-exceptions -ffreestanding -fno-builtin -Werror -nostdlib  -fno-use-cxa-atexit -Wextra -Wno-unused -g -fpie -c -o test.o test.cpp
+i686-elf-gcc  -c -o x86/syscall.o x86/syscall.S
+i686-elf-ld -Ttest-x86.ld -L/opt/lib/gcc/i686-elf/6.1.0/ -o test.elf mtgos.o test.o x86/syscall.o -lgcc
+gmake[1]: Leaving directory '/usr/home/morten/sources/MTGos/user'
+mv user/*.elf .
+stripping
+Compressing...
+How many megabytes should the image be?
