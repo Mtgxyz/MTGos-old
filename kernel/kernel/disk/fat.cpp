@@ -50,6 +50,20 @@ struct BPB {
     uint32_t totalSectors_b;
     EBPB ebpb;
 }__attribute__((packed));
+struct dirent {
+    uint8_t filename[11];
+    uint8_t flags;
+    uint8_t reserved;
+    uint8_t creationTenth;
+    uint16_t creationTime;
+    uint16_t creationDate;
+    uint16_t accessDate;
+    uint16_t hiClusterNUM;
+    uint16_t modifyTime;
+    uint16_t modifyDate;
+    uint16_t clusterNUM;
+    uint32_t fileSize;
+}__attribute__((packed));
 void readFAT() {
     BPB bpb;
     MBR::MBR part(disk.getDriveNumByName("ATA0m"));
@@ -58,7 +72,7 @@ void readFAT() {
     out << "Sectors per Cluster: " << (int) bpb.sectorsPerCluster << "\n";
     out << "Reserved Sectors: " << (int) bpb.reservedSectors << "\n";
     out << "Number of FATs: " << (int) bpb.numberFAT << "\n";
-    out << "Number of root directory entries: " << (int) bpb.reservedSectors << "\n";
+    out << "Number of root directory entries: " << (int) bpb.numDirent << "\n";
     uint32_t totalSectors=(bpb.totalSectors_s)?bpb.totalSectors_s:bpb.totalSectors_b;
     out << "Total sectors: " << (int) totalSectors << "\n";
     uint32_t sectorsPerFAT = (bpb.sectorsPerFAT)?bpb.sectorsPerFAT:bpb.ebpb.fat32.sectorsPerFAT;
@@ -86,5 +100,14 @@ void readFAT() {
     if(fatVer>28) {
         out << "Not implemented\n";
         return;
-    }   
+    }
+    out << "Reading root directory\n";
+    dirent *buf=(dirent*)new uint8_t[(sizeRootDir*512)];
+    disk.readSector(disk.getDriveNumByName("ATA0m"),part.getPartBeg(0)+firstDataSector-sizeRootDir, sizeRootDir, (uint8_t*)buf);
+    for(int i=0;i<bpb.numDirent;i++) {
+        buf[i].flags=0;
+        if(buf[i].fileSize==0)
+            continue;
+        out << (char*)buf[i].filename << "@"<<(int)buf[i].clusterNUM << " - Size: " << (int)buf[i].fileSize << ".\n";
+    }
 }
