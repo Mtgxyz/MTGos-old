@@ -32,6 +32,7 @@ void task_d() {
     while(true)
         out << "d";
 }
+void readFAT();
 void main(void ** files, MTGosHAL::Serial &debug, MTGosHAL::PMM &mm, MTGosHAL::Screen &out,
     MTGosHAL::Screen &err, MTGosHAL::Keyboard &in, MTGosHAL::Multitasking &tasks, MTGosHAL::BlockDevice &disk) {
     out << "Initializing Kernel!\n";
@@ -49,4 +50,5 @@ void main(void ** files, MTGosHAL::Serial &debug, MTGosHAL::PMM &mm, MTGosHAL::S
     out << "Partition 2: beg=" << (int32_t)part.getPartBeg(1) << " end=" << (int32_t)part.getPartEnd(1) << "\n";
     out << "Partition 3: beg=" << (int32_t)part.getPartBeg(2) << " end=" << (int32_t)part.getPartEnd(2) << "\n";
     out << "Partition 4: beg=" << (int32_t)part.getPartBeg(3) << " end=" << (int32_t)part.getPartEnd(3) << "\n";
+    readFAT();
 }
